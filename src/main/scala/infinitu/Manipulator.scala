@@ -1,0 +1,5 @@
+package infinitu
+
+trait Manipulator {
+
+}
