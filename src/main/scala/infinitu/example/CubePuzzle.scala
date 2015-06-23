@@ -70,7 +70,7 @@ case object Pieces {
 }
 
 case class CubePuzzle(override val objects: Map[IntegerThreeDObjectAddress, Piece] = Map()) extends IntegerThreeDUniverse[Piece](objects = objects)
-  with InvalidAddresses[IntegerThreeDObjectAddress] {
+    with InvalidAddresses[IntegerThreeDObjectAddress] {
 
   override val name: String = "CubePuzzle"
   override val firstDimensionName = "x"

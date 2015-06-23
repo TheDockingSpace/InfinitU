@@ -1,14 +1,21 @@
 package infinitu
 
 import scala.collection.immutable.SortedSet
+import scala.collection.{ mutable }
 
-trait DimensionValue[V <: Comparable[_]] {
+trait DimensionValue[V <: Comparable[_]] extends Ordered[DimensionValue[V]] {
 
   val value: V
 
   def minus(other: DimensionValue[V]): DimensionValue[V]
 
   def plus(other: DimensionValue[V]): DimensionValue[V]
+
+  override def compare(that: DimensionValue[V]): Int = {
+    val aVal = this.value.asInstanceOf[Comparable[Any]]
+    val bVal = that.value.asInstanceOf[Comparable[Any]]
+    aVal.compareTo(bVal)
+  }
 
 }
 
@@ -114,7 +121,20 @@ trait DiscreteDimension[V <: Comparable[_]] extends Dimension[V] {
 }
 
 trait ObjectAddress {
-  val dimensionValues: List[DimensionValue[_]]
+
+  val dimensions: List[Dimension[_]]
+
+  val values: List[DimensionValue[_]]
+
+  for ((d, v) <- dimensions.zip(values)) {
+    d.asInstanceOf[Dimension[Comparable[_]]].accept(v.asInstanceOf[DimensionValue[Comparable[_]]])
+  }
+
+  def valueAt[V <: Comparable[_]](d: Dimension[V]): DimensionValue[V] = values(dimensions.indexOf(d)).asInstanceOf[DimensionValue[V]]
+
+  def updated[A <: ObjectAddress](valueIndex: Int, v: DimensionValue[_]) = withValues[A](values.updated(valueIndex, v))
+
+  def withValues[A <: ObjectAddress](values: List[DimensionValue[_]]): A
 }
 
 trait Universe[A <: ObjectAddress, V <: Comparable[_]] {
@@ -128,7 +148,7 @@ trait Universe[A <: ObjectAddress, V <: Comparable[_]] {
   val objects: Map[A, V]
 
   def acceptValueOnAddress(address: A, value: V): Boolean = {
-    address.dimensionValues.zip(dimensions).forall {
+    address.values.zip(dimensions).forall {
       case (dimensionValue: DimensionValue[Any], dimension: Dimension[Any]) =>
         dimension.accept(dimensionValue)
     }
@@ -140,14 +160,27 @@ trait Universe[A <: ObjectAddress, V <: Comparable[_]] {
 
   def put(address: A, value: V): Universe[A, V] = {
     validate(address, value)
-    newWithObjects(objects + (address -> value))
+    withObjects(objects + (address -> value))
   }
 
-  def newWithObjects(objects: Map[A, V]): Universe[A, V]
+  def withObjects(objects: Map[A, V]): Universe[A, V]
 
   def get(address: A): Option[V] = objects.get(address)
 
   def apply(address: A) = objects(address)
+
+  case class AddressesByDimension(d: Dimension[V]) extends Ordering[A] {
+    def compare(a: A, b: A): Int = a.valueAt(d).compare(b.valueAt(d))
+  }
+
+  def invertAddress(dimension: Dimension[V]): Universe[A, V] = {
+    val sortedAddresses = objects.keys.toList.sortWith(AddressesByDimension(dimension).gt)
+    val readdressedObjects = sortedAddresses.zip(sortedAddresses.reverse).map {
+      case (original: A, inverted: A) =>
+        inverted -> objects(original)
+    }.toMap
+    withObjects(readdressedObjects)
+  }
 
 }
 
@@ -162,7 +195,7 @@ trait InvalidAddresses[A <: ObjectAddress] {
   }
 
   def acceptAddress(address: A): Boolean = {
-    address.dimensionValues.zip(dimensions).forall {
+    address.values.zip(dimensions).forall {
       case (dimensionValue: DimensionValue[Any], dimension: Dimension[Any]) =>
         dimension.accept(dimensionValue)
     }
@@ -185,7 +218,7 @@ case class IntegerValue(override val value: Integer = 0) extends DiscreteDimensi
 }
 
 case class IntegerInterval(override val left: IntegerValue, override val right: IntegerValue, override val include: DimensionIntervalInclude = DimensionIntervalInclude.Both)
-  extends DiscreteDimensionInterval[Integer] {
+    extends DiscreteDimensionInterval[Integer] {
 
   override def next = IntegerInterval(right, right.plus(size), if (include.right) DimensionIntervalInclude.Right else DimensionIntervalInclude.Left)
 
@@ -199,31 +232,39 @@ case class IntegerDimension(override val name: String) extends DiscreteDimension
 
 }
 
-case class IntegerTwoDObjectAddress(val firstValue: Integer = 0, val secondValue: Integer = 0) extends ObjectAddress {
-  override val dimensionValues = List(IntegerValue(firstValue), IntegerValue(firstValue))
+case class IntegerTwoDObjectAddress(val firstValue: Integer = 0, val secondValue: Integer = 0, val dimensions: List[Dimension[_]] = List(IntegerDimension("x"), IntegerDimension("y"))) extends ObjectAddress {
+
+  override val values = List(IntegerValue(firstValue), IntegerValue(firstValue))
+
+  override def withValues[A <: ObjectAddress](values: List[DimensionValue[_]]): A = IntegerTwoDObjectAddress(values(0).asInstanceOf[Integer], values(1).asInstanceOf[Integer], dimensions).asInstanceOf[A]
+
 }
 
-class IntegerTwoDUniverse[V <: Comparable[_]](override val name: String = "IntegerTwoDUniverse", val firstDimensionName: String = "First Dimension", val secondDimensionName: String = "Second Dimension", override val objects: Map[IntegerTwoDObjectAddress, _ <: V] = Map())
-  extends Universe[IntegerTwoDObjectAddress, V] {
+class IntegerTwoDUniverse[V <: Comparable[_]](override val name: String = "IntegerTwoDUniverse", val firstDimensionName: String = "x", val secondDimensionName: String = "y", override val objects: Map[IntegerTwoDObjectAddress, _ <: V] = Map())
+    extends Universe[IntegerTwoDObjectAddress, V] {
 
   override val dimensions = List(IntegerDimension(firstDimensionName), IntegerDimension(secondDimensionName))
 
-  override def newWithObjects(objects: Map[IntegerTwoDObjectAddress, V]) = {
+  override def withObjects(objects: Map[IntegerTwoDObjectAddress, V]) = {
     new IntegerTwoDUniverse(name, firstDimensionName, secondDimensionName, objects)
   }
 
 }
 
-case class IntegerThreeDObjectAddress(val firstValue: Integer = 0, val secondValue: Integer = 0, val thirdValue: Integer = 0) extends ObjectAddress {
-  override val dimensionValues = List(IntegerValue(firstValue), IntegerValue(firstValue), IntegerValue(thirdValue))
+case class IntegerThreeDObjectAddress(val firstValue: Integer = 0, val secondValue: Integer = 0, val thirdValue: Integer = 0, val dimensions: List[Dimension[_]] = List(IntegerDimension("x"), IntegerDimension("y"), IntegerDimension("z"))) extends ObjectAddress {
+
+  override val values = List(IntegerValue(firstValue), IntegerValue(firstValue), IntegerValue(thirdValue))
+
+  override def withValues[A <: ObjectAddress](values: List[DimensionValue[_]]): A = IntegerThreeDObjectAddress(values(0).asInstanceOf[Integer], values(1).asInstanceOf[Integer], values(2).asInstanceOf[Integer], dimensions).asInstanceOf[A]
+
 }
 
-class IntegerThreeDUniverse[V <: Comparable[_]](override val name: String = "IntegerThreeDUniverse", val firstDimensionName: String = "First Dimension", val secondDimensionName: String = "Second Dimension", val thirdDimensionName: String = "Third Dimension", override val objects: Map[IntegerThreeDObjectAddress, V] = Map())
-  extends Universe[IntegerThreeDObjectAddress, V] {
+class IntegerThreeDUniverse[V <: Comparable[_]](override val name: String = "IntegerThreeDUniverse", val firstDimensionName: String = "x", val secondDimensionName: String = "y", val thirdDimensionName: String = "z", override val objects: Map[IntegerThreeDObjectAddress, V] = Map())
+    extends Universe[IntegerThreeDObjectAddress, V] {
 
   override val dimensions = List(IntegerDimension(firstDimensionName), IntegerDimension(secondDimensionName), IntegerDimension(thirdDimensionName))
 
-  override def newWithObjects(objects: Map[IntegerThreeDObjectAddress, V]) = {
+  override def withObjects(objects: Map[IntegerThreeDObjectAddress, V]) = {
     new IntegerThreeDUniverse(name, firstDimensionName, secondDimensionName, thirdDimensionName, objects)
   }
 
