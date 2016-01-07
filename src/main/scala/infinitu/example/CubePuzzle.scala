@@ -79,7 +79,7 @@ case class CubePuzzle(override val objects: Map[IntegerThreeDObjectAddress, Piec
 
   override val invalidAddresses = List(IntegerThreeDObjectAddress(1, 1, 1))
 
-  override def newWithObjects(objects: Map[IntegerThreeDObjectAddress, Piece]) = {
+  override def withObjects(objects: Map[IntegerThreeDObjectAddress, Piece]) = {
     new CubePuzzle(objects)
   }
 
