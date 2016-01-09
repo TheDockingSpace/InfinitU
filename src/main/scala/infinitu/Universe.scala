@@ -11,6 +11,8 @@ trait DimensionValue[V <: Comparable[_]] extends Ordered[DimensionValue[V]] {
 
   def plus(other: DimensionValue[V]): DimensionValue[V]
 
+  def isZero : Boolean
+
   override def compare(that: DimensionValue[V]): Int = {
     val aVal = this.value.asInstanceOf[Comparable[Any]]
     val bVal = that.value.asInstanceOf[Comparable[Any]]
@@ -32,6 +34,8 @@ sealed trait DimensionIntervalInclude {
   val left: Boolean
 
   val right: Boolean
+
+  def both = left && right
 
   val template: String
 
@@ -80,7 +84,7 @@ object DimensionIntervalInclude {
 
 }
 
-trait DimensionInterval[V <: Comparable[_]] {
+trait DimensionInterval[V <: Comparable[_]] extends Ordered[DimensionInterval[V]] {
 
   val left: DimensionValue[V]
 
@@ -88,7 +92,23 @@ trait DimensionInterval[V <: Comparable[_]] {
 
   val include: DimensionIntervalInclude = DimensionIntervalInclude.Both
 
-  def size = right.minus(left)
+  def size : DimensionValue[V] = right.minus(left)
+
+  override def compare(that: DimensionInterval[V]): Int = {
+    implicit def comparable(obj: Any) = obj.asInstanceOf[Comparable[Any]]
+    val aVal = this.left.value
+    val bVal = that.left.value
+    val left = aVal.compareTo(bVal)
+    if (left == 0) {
+      if (this.include == that.include) {
+        this.size.compareTo(that.size)
+      } else {
+        this.include.compareTo(that.include)
+      }
+    } else {
+      left
+    }
+  }
 
   override def toString = String.format(include.template, left.value.toString, right.value.toString)
 
@@ -96,9 +116,13 @@ trait DimensionInterval[V <: Comparable[_]] {
 
 trait DiscreteDimensionInterval[V <: Comparable[_]] extends DimensionInterval[V] {
 
-  def next: DimensionInterval[V]
+  def next = if (size.isZero) this else getNext
 
-  def previous: DimensionInterval[V]
+  def getNext: DimensionInterval[V]
+
+  def previous = if (size.isZero) this else getPrevious
+
+  def getPrevious: DimensionInterval[V]
 
 }
 
@@ -215,14 +239,26 @@ case class IntegerValue(override val value: Integer = 0) extends DiscreteDimensi
 
   override def previous = IntegerValue(value - 1)
 
+  override def isZero = value == 0
+
 }
 
 case class IntegerInterval(override val left: IntegerValue, override val right: IntegerValue, override val include: DimensionIntervalInclude = DimensionIntervalInclude.Both)
     extends DiscreteDimensionInterval[Integer] {
 
-  override def next = IntegerInterval(right, right.plus(size), if (include.right) DimensionIntervalInclude.Right else DimensionIntervalInclude.Left)
+  override def getNext = IntegerInterval(right, right.plus(size), if (include.right) DimensionIntervalInclude.Right else DimensionIntervalInclude.Left)
 
-  override def previous = IntegerInterval(left, left.minus(size), if (include.left) DimensionIntervalInclude.Left else DimensionIntervalInclude.Right)
+  override def getPrevious = IntegerInterval(left.minus(size), left, if (include.left) DimensionIntervalInclude.Left else DimensionIntervalInclude.Right)
+
+}
+
+object IntegerInterval {
+
+  def apply(left: Int, right: Int, include: DimensionIntervalInclude) : IntegerInterval = IntegerInterval(IntegerValue(left), IntegerValue(right), include)
+
+  def apply(left: Int, right: Int) : IntegerInterval = apply(left, right, DimensionIntervalInclude.Both)
+
+  def apply(): IntegerInterval = apply(0, 0)
 
 }
 
