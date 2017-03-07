@@ -12,6 +12,10 @@ addSbtPlugin("org.scala-native" % "sbt-cross"         % pluginVersion)
 addSbtPlugin("org.scala-native" % "sbt-scala-native"  % "0.1.0-SNAPSHOT")
 
 addSbtPlugin("com.geirsson" % "sbt-scalafmt" % "0.5.6")
+addSbtPlugin("org.scalastyle" %% "scalastyle-sbt-plugin" % "0.8.0")
+//addSbtPlugin("com.sksamuel.scapegoat" %% "sbt-scapegoat" % "1.0.4")
+addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.5.0")
+addSbtPlugin("de.johoop" % "cpd4sbt" % "1.2.0")
 
 scalacOptions ++= Seq(
   "-deprecation",

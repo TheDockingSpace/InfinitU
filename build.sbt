@@ -1,7 +1,10 @@
 import sbtcross.{crossProject, CrossType}
 
+enablePlugins(CopyPasteDetector)
+
 lazy val core = crossProject(JSPlatform, JVMPlatform /*, NativePlatform*/ )
   .settings(scalaVersion := "2.12.1",
+            //scapegoatVersion := "1.1.0",
             libraryDependencies ++= Seq(
               "org.specs2" %% "specs2-core" % "3.8.8" % "test"))
 //.nativeSettings(resolvers += Resolver.sonatypeRepo("snapshots"))
