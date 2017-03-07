@@ -75,3 +75,9 @@ com_crashlytics_export_strings.xml
 crashlytics.properties
 crashlytics-build.properties
 
+###Ensime###
+
+# Ensime specific
+.ensime
+.ensime_lucene/
+.ensime_cache/
