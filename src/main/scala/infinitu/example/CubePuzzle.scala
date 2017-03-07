@@ -1,10 +1,7 @@
 package infinitu.example
 
-import infinitu.IntegerTwoDUniverse
-import infinitu.IntegerThreeDObjectAddress
-import infinitu.IntegerThreeDUniverse
-import infinitu.InvalidAddresses
-import infinitu.IntegerThreeDObjectAddress
+import infinitu.integer._
+import infinitu.universe._
 
 sealed trait Color extends Ordered[Color] {
 
@@ -69,17 +66,17 @@ case object Pieces {
 
 }
 
-case class CubePuzzle(override val objects: Map[IntegerThreeDObjectAddress, Piece] = Map()) extends IntegerThreeDUniverse[Piece](objects = objects)
-    with InvalidAddresses[IntegerThreeDObjectAddress] {
+case class CubePuzzle(override val objects: Map[Integer3DObjectAddress, Piece] = Map()) extends Integer3DUniverse[Piece](objects = objects)
+  with InvalidAddresses[Integer3DObjectAddress] {
 
   override val name: String = "CubePuzzle"
   override val firstDimensionName = "x"
   override val secondDimensionName = "y"
   override val thirdDimensionName = "z"
 
-  override val invalidAddresses = List(IntegerThreeDObjectAddress(1, 1, 1))
+  override val invalidAddresses = List(Integer3DObjectAddress(1, 1, 1))
 
-  override def withObjects(objects: Map[IntegerThreeDObjectAddress, Piece]) = {
+  override def withObjects(objects: Map[Integer3DObjectAddress, Piece]) = {
     new CubePuzzle(objects)
   }
 
