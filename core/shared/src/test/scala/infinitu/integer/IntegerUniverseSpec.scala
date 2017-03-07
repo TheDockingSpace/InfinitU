@@ -1,33 +1,39 @@
-package infinitu.universe
+package infinitu.integer
 
-import infinitu.dimension._
-import infinitu.integer._
+import infinitu.dimension.DimensionValue
+import org.junit.runner.RunWith
 import org.specs2.matcher.ShouldMatchers
 import org.specs2.mutable.Specification
+import org.specs2.runner.JUnitRunner
 
-object UniverseSpec extends Specification with ShouldMatchers {
+@RunWith(classOf[JUnitRunner])
+class IntegerUniverseSpec extends Specification with ShouldMatchers {
 
-  "An IntegerValue" in {
-    val iv = IntegerValue()
-    iv.value must be equalTo (0)
+  "IntegerUniverse" should {
 
-    val iv2 = IntegerValue(0)
-    iv must be equalTo iv2
+    "An IntegerValue" in {
+      val iv = IntegerValue()
+      iv.value must be equalTo (0)
 
-    iv plus iv2 must be equalTo iv
+      val iv2 = IntegerValue(0)
+      iv must be equalTo iv2
 
-    val iv3 = IntegerValue(1)
-    iv3 plus iv3 must be equalTo IntegerValue(2)
+      iv plus iv2 must be equalTo iv
 
-    iv3 minus iv3 must be equalTo iv
+      val iv3 = IntegerValue(1)
+      iv3 plus iv3 must be equalTo IntegerValue(2)
 
-    iv.next must be equalTo iv3
+      iv3 minus iv3 must be equalTo iv
 
-    iv3.previous must be equalTo iv
+      iv.next must be equalTo iv3
 
-    //why not? iv3 must be greaterThan iv
-    iv3.asInstanceOf[DimensionValue[Integer]] must be greaterThan iv
-    iv.asInstanceOf[DimensionValue[Integer]] must be lessThan iv3
+      iv3.previous must be equalTo iv
+
+      //why not? iv3 must be greaterThan iv
+      iv3.asInstanceOf[DimensionValue[Integer]] must be greaterThan iv
+      iv.asInstanceOf[DimensionValue[Integer]] must be lessThan iv3
+    }
+
   }
 
 }
