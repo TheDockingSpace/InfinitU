@@ -11,12 +11,15 @@ trait ObjectAddress {
   val values: List[DimensionValue[_]]
 
   for ((d, v) <- dimensions.zip(values)) {
-    d.asInstanceOf[Dimension[Comparable[_]]].accept(v.asInstanceOf[DimensionValue[Comparable[_]]])
+    d.asInstanceOf[Dimension[Comparable[_]]]
+      .accept(v.asInstanceOf[DimensionValue[Comparable[_]]])
   }
 
-  def valueAt[V <: Comparable[_]](d: Dimension[V]): DimensionValue[V] = values(dimensions.indexOf(d)).asInstanceOf[DimensionValue[V]]
+  def valueAt[V <: Comparable[_]](d: Dimension[V]): DimensionValue[V] =
+    values(dimensions.indexOf(d)).asInstanceOf[DimensionValue[V]]
 
-  def updated[A <: ObjectAddress](valueIndex: Int, v: DimensionValue[_]) = withValues[A](values.updated(valueIndex, v))
+  def updated[A <: ObjectAddress](valueIndex: Int, v: DimensionValue[_]) =
+    withValues[A](values.updated(valueIndex, v))
 
   def withValues[A <: ObjectAddress](values: List[DimensionValue[_]]): A
 }
@@ -39,7 +42,9 @@ trait Universe[A <: ObjectAddress, V <: Comparable[_]] {
   }
 
   def validate(address: A, value: V) {
-    require(acceptValueOnAddress(address, value), s"This universe does not accept the value $value in the address $address")
+    require(
+      acceptValueOnAddress(address, value),
+      s"This universe does not accept the value $value in the address $address")
   }
 
   def put(address: A, value: V): Universe[A, V] = {
@@ -58,23 +63,27 @@ trait Universe[A <: ObjectAddress, V <: Comparable[_]] {
   }
 
   def invertAddress(dimension: Dimension[V]): Universe[A, V] = {
-    val sortedAddresses = objects.keys.toList.sortWith(AddressesByDimension(dimension).gt)
-    val readdressedObjects = sortedAddresses.zip(sortedAddresses.reverse).map {
-      case (original, inverted) =>
-        inverted -> objects(original)
-    }.toMap
+    val sortedAddresses =
+      objects.keys.toList.sortWith(AddressesByDimension(dimension).gt)
+    val readdressedObjects = sortedAddresses
+      .zip(sortedAddresses.reverse)
+      .map {
+        case (original, inverted) =>
+          inverted -> objects(original)
+      }
+      .toMap
     withObjects(readdressedObjects)
   }
 
 }
 
-trait InvalidAddresses[A <: ObjectAddress] {
-  self: Universe[_, _] =>
+trait InvalidAddresses[A <: ObjectAddress] { self: Universe[_, _] =>
 
   def invalidAddresses: List[A] = Nil
 
   def validate(address: A, value: Any) {
-    require(acceptAddress(address), s"The address $address is invalid in this universe")
+    require(acceptAddress(address),
+            s"The address $address is invalid in this universe")
   }
 
   def acceptAddress(address: A): Boolean = {

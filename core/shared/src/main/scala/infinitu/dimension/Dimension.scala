@@ -87,11 +87,13 @@ trait DimensionInterval[V <: Comparable[_]] {
 
   def size = right.minus(left)
 
-  override def toString = String.format(include.template, left.value.toString, right.value.toString)
+  override def toString =
+    String.format(include.template, left.value.toString, right.value.toString)
 
 }
 
-trait DiscreteDimensionInterval[V <: Comparable[_]] extends DimensionInterval[V] {
+trait DiscreteDimensionInterval[V <: Comparable[_]]
+    extends DimensionInterval[V] {
 
   def next: DimensionInterval[V]
 
@@ -105,7 +107,8 @@ trait Dimension[V <: Comparable[_]] {
 
   val origin: DimensionValue[V]
 
-  def accept(someValue: DimensionValue[V]) = someValue.value.getClass.equals(origin.value.getClass)
+  def accept(someValue: DimensionValue[V]) =
+    someValue.value.getClass.equals(origin.value.getClass)
 
   override def toString = name
 

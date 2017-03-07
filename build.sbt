@@ -1,10 +1,19 @@
-scalaVersion := "2.11.7"
+import sbtcross.{crossProject, CrossType}
 
-//crossScalaVersions := Seq("2.10.6", "2.11.7")
+lazy val core = crossProject(JSPlatform, JVMPlatform /*, NativePlatform*/ )
+  .settings(scalaVersion := "2.12.1",
+            libraryDependencies ++= Seq(
+              "org.specs2" %% "specs2-core" % "3.8.8" % "test"))
+//.nativeSettings(resolvers += Resolver.sonatypeRepo("snapshots"))
+
+lazy val coreJS  = core.js
+lazy val coreJVM = core.jvm
+//lazy val coreNative = core.native
 
 scalacOptions ++= Seq(
   "-target:jvm-1.8",
-  "-encoding", "UTF-8",
+  "-encoding",
+  "UTF-8",
   "-deprecation",
   "-feature",
   "-unchecked",
@@ -26,10 +35,7 @@ resolvers ++= Seq(
   Resolver.typesafeIvyRepo("releases")
 )
 
-
 fork in run := true
-
-libraryDependencies ++= Seq("org.specs2" %% "specs2-core" % "3.6" % "test")
 
 resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
 
