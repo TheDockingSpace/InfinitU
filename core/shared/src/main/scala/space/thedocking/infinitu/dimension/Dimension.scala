@@ -1,4 +1,4 @@
-package infinitu.dimension
+package space.thedocking.infinitu.dimension
 
 trait DimensionValue[V <: Comparable[_]] extends Ordered[DimensionValue[V]] {
 

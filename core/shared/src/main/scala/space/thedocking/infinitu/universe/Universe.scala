@@ -1,6 +1,6 @@
-package infinitu.universe
+package space.thedocking.infinitu.universe
 
-import infinitu.dimension._
+import space.thedocking.infinitu.dimension._
 
 import scala.collection.immutable.SortedSet
 

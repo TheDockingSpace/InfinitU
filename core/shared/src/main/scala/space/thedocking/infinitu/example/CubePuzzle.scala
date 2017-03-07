@@ -1,7 +1,7 @@
-package infinitu.example
+package space.thedocking.infinitu.example
 
-import infinitu.integer._
-import infinitu.universe._
+import space.thedocking.infinitu.integer._
+import space.thedocking.infinitu.universe._
 
 sealed trait Color extends Ordered[Color] {
 

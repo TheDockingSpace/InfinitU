@@ -1,4 +1,4 @@
-package infinitu.example
+package space.thedocking.infinitu.example
 
 /**
   * Created by od on 04.02.16.

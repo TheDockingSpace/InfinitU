@@ -1,4 +1,4 @@
-package infinitu.example
+package space.thedocking.infinitu.example
 
 import org.specs2.matcher.ShouldMatchers
 import org.specs2.mutable.Specification

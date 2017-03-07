@@ -1,6 +1,6 @@
-package infinitu.integer
+package space.thedocking.infinitu.integer
 
-import infinitu.dimension.DimensionValue
+import space.thedocking.infinitu.dimension.DimensionValue
 import org.junit.runner.RunWith
 import org.specs2.matcher.ShouldMatchers
 import org.specs2.mutable.Specification

@@ -13,6 +13,18 @@ lazy val coreJS  = core.js
 lazy val coreJVM = core.jvm
 //lazy val coreNative = core.native
 
+lazy val quantum = crossProject(JSPlatform, JVMPlatform /*, NativePlatform*/ )
+  .settings(scalaVersion := "2.12.1",
+            //scapegoatVersion := "1.1.0",
+            libraryDependencies ++= Seq(
+              "org.specs2" %% "specs2-junit" % "3.8.8" % "test"))
+//.nativeSettings(resolvers += Resolver.sonatypeRepo("snapshots"))
+  .dependsOn(core)
+
+lazy val quantumJS  = quantum.js
+lazy val quantumJVM = quantum.jvm
+//lazy val quantumNative = quantum.native
+
 scalacOptions ++= Seq(
   "-target:jvm-1.8",
   "-encoding",

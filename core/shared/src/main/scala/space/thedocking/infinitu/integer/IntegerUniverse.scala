@@ -1,7 +1,7 @@
-package infinitu.integer
+package space.thedocking.infinitu.integer
 
-import infinitu.dimension._
-import infinitu.universe._
+import space.thedocking.infinitu.dimension._
+import space.thedocking.infinitu.universe._
 
 case class IntegerValue(override val value: Integer = 0)
     extends DiscreteDimensionValue[Integer] {
