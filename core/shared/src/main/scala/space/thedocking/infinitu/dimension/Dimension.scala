@@ -1,5 +1,22 @@
 package space.thedocking.infinitu.dimension
 
+//TODO bake finiteness in values and dimensions?
+abstract sealed trait Finiteness {
+  
+  val isDimensionFinite = false
+  
+}
+
+trait Infinite extends Finiteness
+
+trait Finite[V <: DimensionValue[_]] extends Finiteness {
+  
+  override val isDimensionFinite = true
+  
+  def allValues: Seq[V]
+  
+}
+
 trait DimensionValue[V <: Comparable[_]] extends Ordered[DimensionValue[V]] {
 
   val value: V
