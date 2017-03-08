@@ -10,9 +10,10 @@ import space.thedocking.infinitu.bool.BooleanValue
 
 @RunWith(classOf[JUnitRunner])
 class QuantumStateSpec extends Specification with ShouldMatchers {
-  
-  val trueQS: QuantumState[BooleanValue] = true 
-  val collapser: Collapser[BooleanValue] = new RandomFiniteSuperpositionCollapser
+
+  val trueQS: QuantumState[BooleanValue] = true
+  val collapser: Collapser[BooleanValue] =
+    new RandomFiniteSuperpositionCollapser
 
   "QuantumState" should {
 
@@ -23,7 +24,8 @@ class QuantumStateSpec extends Specification with ShouldMatchers {
       println(plot(lines).mkString("\n"))
       val total = lines.map(_._2).sum
       total must beEqualTo(times)
-      lines(CollapsedTrueValue) must beCloseTo(lines(CollapsedFalseValue), delta)
+      lines(CollapsedTrueValue) must beCloseTo(lines(CollapsedFalseValue),
+                                               delta)
     }
 
   }

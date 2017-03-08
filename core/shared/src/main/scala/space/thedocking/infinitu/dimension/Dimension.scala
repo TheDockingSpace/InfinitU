@@ -1,20 +1,27 @@
 package space.thedocking.infinitu.dimension
 
 //TODO bake finiteness in values and dimensions?
-abstract sealed trait Finiteness {
-  
+abstract sealed trait Finiteness[V] {
+
   val isDimensionFinite = false
-  
+
+  def randomValue: V
+
 }
 
-trait Infinite extends Finiteness
+trait Infinite[V <: DimensionValue[_]] extends Finiteness[V]
 
-trait Finite[V <: DimensionValue[_]] extends Finiteness {
-  
+trait Finite[V <: DimensionValue[_]] extends Finiteness[V] {
+
   override val isDimensionFinite = true
-  
+
   def allValues: Seq[V]
-  
+
+  override def randomValue: V = {
+    val values = allValues
+    values.drop(scala.util.Random.nextInt(values.size)).head
+  }
+
 }
 
 trait DimensionValue[V <: Comparable[_]] extends Ordered[DimensionValue[V]] {
