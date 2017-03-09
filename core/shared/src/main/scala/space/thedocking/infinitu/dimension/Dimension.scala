@@ -40,6 +40,10 @@ trait DimensionValue[V <: Comparable[_]] extends Ordered[DimensionValue[V]] {
 
 }
 
+trait Negatable[V <: DimensionValue[_]] {
+  def negate: V
+}
+
 trait DiscreteDimensionValue[V <: Comparable[_]] extends DimensionValue[V] {
 
   def next: DimensionValue[V]

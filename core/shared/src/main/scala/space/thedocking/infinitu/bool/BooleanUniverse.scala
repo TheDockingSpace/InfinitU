@@ -4,6 +4,7 @@ import space.thedocking.infinitu.dimension.DiscreteDimensionValue
 import space.thedocking.infinitu.dimension.DimensionValue
 import space.thedocking.infinitu.dimension.Finite
 import java.lang.{Boolean => JBoolean}
+import space.thedocking.infinitu.dimension.Negatable
 
 //TODO complete other methods, trait implementations and refactor to remove the plus minus stuff
 //for now, just a thought, roughly interpreting values as 1 or 0 for plus/minus
@@ -11,10 +12,13 @@ import java.lang.{Boolean => JBoolean}
 trait BooleanValue
 //scala's boolean is not comparable???
     extends DiscreteDimensionValue[JBoolean]
+    with Negatable[BooleanValue]
 
 case object TrueValue extends BooleanValue {
 
   override val value: JBoolean = true
+
+  override def negate = FalseValue
 
   override def plus(other: DimensionValue[JBoolean]) =
     TrueValue
@@ -31,6 +35,8 @@ case object TrueValue extends BooleanValue {
 case object FalseValue extends BooleanValue {
 
   override val value: JBoolean = false
+
+  override def negate = TrueValue
 
   override def plus(other: DimensionValue[JBoolean]) =
     if (other.value) TrueValue else FalseValue
