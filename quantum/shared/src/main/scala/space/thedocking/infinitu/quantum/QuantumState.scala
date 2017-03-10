@@ -9,6 +9,8 @@ import space.thedocking.infinitu.dimension.Finiteness
 
 sealed trait QuantumState {
 
+  def prettyValue: String
+
   val isSuperposition = false
 
   val isCollapsed = false
@@ -24,6 +26,8 @@ trait CollapsedValue[V] extends QuantumState {
   val value: V
 
   override val isCollapsed = true
+
+  override lazy val prettyValue = QuantumState.prettyValue(value)
 
 }
 
@@ -57,6 +61,8 @@ trait Superposition[V] extends QuantumState with Collapsable[V, V] {
   self: Finiteness[V] =>
 
   override val isSuperposition = true
+
+  override val prettyValue = "S"
 
 }
 
@@ -94,13 +100,10 @@ object Plotter {
       first.compareTo(second.asInstanceOf)
   }
 
-  //TODO make the collapsed value responsible for pretty printing
   private def prettyEntry(entry: (CollapsedValue[_], Int)): (String, Int) =
     entry match {
-      case (k, v) if (k.value.isInstanceOf[DimensionValue[_]]) =>
-        (k.value.asInstanceOf[DimensionValue[_]].value.toString, v)
       case (k, v) =>
-        (k.value.toString, v)
+        (QuantumState.prettyValue(k), v)
     }
 
   def plot[V](values: Map[CollapsedValue[V], Int]): Seq[String] = {
@@ -128,6 +131,15 @@ object QuantumState {
   implicit def booleanToQS(value: Boolean): CollapsedBooleanValue =
     if (value) CollapsedTrueValue else CollapsedFalseValue
 
+  def prettyValue(value: Any): String =
+    value match {
+      case q: QuantumState      => q.prettyValue
+      case o: Option[_]         => prettyValue(o.getOrElse("?"))
+      case v: DimensionValue[_] => prettyValue(v.value)
+      case null                 => "!"
+      case _                    => value.toString
+    }
+
 }
 
 //Boolean specific....
@@ -143,7 +155,12 @@ object CollapsedFalseValue extends CollapsedBooleanValue {
 }
 
 case class CollapsedBooleanValues(override val value: List[BooleanValue])
-    extends CollapsedValue[List[BooleanValue]]
+    extends CollapsedValue[List[BooleanValue]] {
+
+  override lazy val prettyValue =
+    value.map(v => if (v.value) "1" else "0").mkString("")
+
+}
 
 case class BooleanSuperposition()
     extends Superposition[BooleanValue]
@@ -182,6 +199,8 @@ case class CNotGate(
     collapsers: Tuple2[_ <: Collapser[BooleanSuperposition, BooleanValue],
                        _ <: Collapser[BooleanSuperposition, BooleanValue]])
     extends HomogeneousEntanglement[BooleanValue] {
+
+  override val prettyValue = "CNOT"
 
   override val entangledStates = states._1 :: states._2 :: Nil
 
