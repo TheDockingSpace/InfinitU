@@ -22,7 +22,7 @@ Currently the implementation focusses on 3 main concepts: Superposition, Entangl
 
 Without going too deep into the theoretical physics that surround them, the initial abstractions would allow exploration of even more interesting directions, turning weird and counter-intuitive concepts into manageable, understandable and hopefully useful.
 
-The project was configured and organized in a way that you can run it on the [ ![JVM](https://api.bintray.com/packages/thedockingspace/Universe/quantumjvm/images/download.svg) ](https://bintray.com/thedockingspace/Universe/quantumjvm/_latestVersion), on the browser via a [ ![Scala.js version](https://api.bintray.com/packages/thedockingspace/Universe/quantumjs/images/download.svg) ](https://bintray.com/thedockingspace/Universe/quantumjs/_latestVersion), and eventually even nativelly.
+The project was configured and organized in a way that you can run it on the JVM([ ![JVM](https://api.bintray.com/packages/thedockingspace/Universe/quantumjvm/images/download.svg) ](https://bintray.com/thedockingspace/Universe/quantumjvm/_latestVersion)), on the browser via a Scala.js cross build ([ ![Scala.js version](https://api.bintray.com/packages/thedockingspace/Universe/quantumjs/images/download.svg) ](https://bintray.com/thedockingspace/Universe/quantumjs/_latestVersion)), and eventually even nativelly.
 
 Stay tuned for more details soon.
 
