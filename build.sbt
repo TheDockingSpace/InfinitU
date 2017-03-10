@@ -9,7 +9,8 @@ lazy val core = crossProject(JSPlatform, JVMPlatform /*, NativePlatform*/ )
               "org.specs2" %% "specs2-junit" % "3.8.8" % "test"))
 //.nativeSettings(resolvers += Resolver.sonatypeRepo("snapshots"))
 
-lazy val coreJS  = core.js
+lazy val coreJS = core.js
+  .settings(libraryDependencies += "org.scala-js" %%% "scalajs-dom" % "0.9.1")
 lazy val coreJVM = core.jvm
 //lazy val coreNative = core.native
 
