@@ -6,7 +6,7 @@ lazy val commonSettings = Seq(
   organization in ThisBuild := "TheDocking.Space",
   bintrayVcsUrl := Some("git@github.com:thedockingspace/InfinitU"),
   licenses += ("LGPL-3.0", url("http://www.opensource.org/licenses/LGPL-3.0")),
-  publishMavenStyle := false,
+  publishMavenStyle := true,
   bintrayRepository := "Universe",
   bintrayOrganization := Some("thedockingspace")
 )
