@@ -1,4 +1,4 @@
-// COPIED FROM sbt-cross-test/src/sbt-test/plugins.sbt
+// based on sbt-cross-test/src/sbt-test/plugins.sbt
 
 resolvers += Resolver.sonatypeRepo("snapshots")
 
@@ -14,6 +14,8 @@ addSbtPlugin("org.scalastyle" %% "scalastyle-sbt-plugin" % "0.8.0")
 //addSbtPlugin("com.sksamuel.scapegoat" %% "sbt-scapegoat" % "1.0.4")
 addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.5.0")
 addSbtPlugin("de.johoop"     % "cpd4sbt"       % "1.2.0")
+
+addSbtPlugin("com.typesafe.sbt" % "sbt-git" % "0.8.5")
 
 scalacOptions ++= Seq(
   "-deprecation",

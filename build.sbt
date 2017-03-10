@@ -1,8 +1,23 @@
 import sbtcrossproject.{crossProject, CrossType}
 
-enablePlugins(CopyPasteDetector)
+enablePlugins(CopyPasteDetector, GitVersioning, GitBranchPrompt)
+
+lazy val commonSettings = Seq(
+  organization in ThisBuild := "TheDocking.Space",
+  bintrayVcsUrl := Some("git@github.com:thedockingspace/InfinitU"),
+  licenses += ("LGPL-3.0", url("http://www.opensource.org/licenses/LGPL-3.0")),
+  publishMavenStyle := false,
+  bintrayRepository := "Universe",
+  bintrayOrganization := Some("thedockingspace")
+)
+
+lazy val InfinitU = (project in file("."))
+  .settings(commonSettings)
+  .settings(publish := {})
+  .aggregate(coreJS, coreJVM, quantumJS, quantumJVM)
 
 lazy val core = crossProject(JSPlatform, JVMPlatform /*, NativePlatform*/ )
+  .settings(commonSettings)
   .settings(scalaVersion := "2.12.1",
             //scapegoatVersion := "1.1.0",
             libraryDependencies ++= Seq(
@@ -15,6 +30,7 @@ lazy val coreJVM = core.jvm
 //lazy val coreNative = core.native
 
 lazy val quantum = crossProject(JSPlatform, JVMPlatform /*, NativePlatform*/ )
+  .settings(commonSettings)
   .settings(scalaVersion := "2.12.1",
             //scapegoatVersion := "1.1.0",
             libraryDependencies ++= Seq(
