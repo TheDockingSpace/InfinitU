@@ -18,8 +18,7 @@ class QuantumStateSpec extends Specification with ShouldMatchers {
     new RandomFiniteSuperpositionCollapser
   val entanglementCollapser: Collapser[
     Collapsable[List[BooleanValue], List[BooleanValue]],
-    List[BooleanValue]] =
-    ???
+    List[BooleanValue]] = BooleanEntanglementCollapser()
 
   "QuantumState" should {
 
