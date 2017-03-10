@@ -4,9 +4,9 @@
 > 
 > -- <cite>René Descartes</cite>
 
-What if in the 17th century we had current technology instead of pen and paper? This project is a exploration of ideas using programming without starting from replicating other implementations or theories (I am not a mathematician).
+What if in the 17th century we had current technology instead of pen and paper? This project is an exploration of ideas using programming without starting from replicating other implementations or theories (I am not a mathematician).
 
-The idea is to create a data structures independent of the usual collection framework concepts, which usually establish what lists or maps are, but leave out concepts like dimensions out or implicit.
+The idea is to create a data structures independent of the collection framework concepts, which usually establish what lists or maps are, but leave out concepts like dimensions.
 
 There are some implementations around for infinite collections, but although it will also be supported here, the focus is on being able of representing an unknown amount of objects in any position expected to be valid by definition in a certain dimension type.
 
@@ -14,6 +14,16 @@ This is not limited to a 3-dimensional space, but taking that as an example, the
 
 The structures should be convertible to traditional ones with some loss of precision when required, so a 2 dimension Universe with 0.5 precision would become a Vector of Vector where values from 0 and 0.5 would go to 0, 1 and 1.5 to 1, and so on.
 
-In a first version, will experiment with a very prototype modelling, trying to solve some simple cube puzzle.
+In the first release I explore a prototypical modelling that can be used to solve things like cube puzzles but I wanted to explore something more interesting: Quantum Mechanics
 
-Then next iterations should refine the model exploring other problems.
+## Quantum
+
+Currently the implementation focusses on 3 main concepts: Superposition, Entanglement and Collapsation.
+
+Without going too deep into the theoretical physics that surround them, the initial abstractions would allow exploration of even more interesting directions, turning weird and counter-intuitive concepts into manageable, understandable and hopefully useful.
+
+The project was configured and organized in a way that you can run it on the [ ![JVM](https://api.bintray.com/packages/thedockingspace/Universe/quantumjvm/images/download.svg) ](https://bintray.com/thedockingspace/Universe/quantumjvm/_latestVersion), on the browser via a [ ![Scala.js version](https://api.bintray.com/packages/thedockingspace/Universe/quantumjs/images/download.svg) ](https://bintray.com/thedockingspace/Universe/quantumjs/_latestVersion), and eventually even nativelly.
+
+Stay tuned for more details soon.
+
+Meanwhile you can have a look on [how to check if the cat in the box is alive](https://github.com/TheDockingSpace/InfinitU/blob/e8759ce1193d0d59e229d590ad8a570d9a8b409a/quantum/js/src/main/scala/space/thedocking/infinitu/quantum/App.scala#L21) :)
