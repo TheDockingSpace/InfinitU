@@ -128,8 +128,11 @@ object Plotter {
 
 object QuantumState {
 
-  implicit def booleanToQS(value: Boolean): CollapsedBooleanValue =
+  implicit def toCollapsed(value: Boolean): CollapsedBooleanValue =
     if (value) CollapsedTrueValue else CollapsedFalseValue
+
+  implicit def toSuperposition(b: Boolean.type): BooleanSuperposition =
+    BooleanSuperposition()
 
   def prettyValue(value: Any): String =
     value match {
@@ -171,6 +174,23 @@ case class BooleanSuperposition()
   override def collapsed(value: BooleanValue) =
     if (value.value) CollapsedTrueValue else CollapsedFalseValue
 
+  //TODO This should go to a registry
+  val defaultCollapser: Collapser[Collapsable[BooleanValue, BooleanValue],
+                                  BooleanValue] =
+    new RandomFiniteSuperpositionCollapser
+
+  //TODO In the future, write a proper DSL with useful shortcuts and syntatic sugar
+  def collapse: Boolean = this.collapse(defaultCollapser).value.value
+
+  def collapse(times: Int): Map[Boolean, Int] =
+    this.collapse(defaultCollapser, times).map {
+      case (k, v) =>
+        val b: Boolean = k.value.value
+        (b, v)
+    }
+
+  def cnot(other: BooleanSuperposition) =
+    CNotGate((this, other), (defaultCollapser, defaultCollapser))
 }
 
 case class BooleanEntanglementCollapser()

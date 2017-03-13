@@ -18,7 +18,12 @@ object App extends JSApp {
     println("Hello quantum!")
     document.body.appendChild {
       document.createTextNode {
-        s"The cat is ${if (BooleanSuperposition().collapse(booleanCollapser).value.value) {
+        //true.collapse is a shortcut to
+        //  val booleanCollapser: Collapser[Collapsable[BooleanValue, BooleanValue],
+        //                                  BooleanValue] =
+        //    new RandomFiniteSuperpositionCollapser
+        //  BooleanSuperposition().collapse(booleanCollapser).value.value
+        s"The cat is ${if (Boolean.collapse) {
           "alive! :)"
         } else {
           "dead. :("
