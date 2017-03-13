@@ -4,16 +4,31 @@ enablePlugins(CopyPasteDetector, GitVersioning, GitBranchPrompt)
 
 lazy val commonSettings = Seq(
   organization in ThisBuild := "TheDocking.Space",
+  organizationHomepage := Some(url("http://TheDocking.Space")),
+  homepage := Some(url("https://github.com/TheDockingSpace/InfinitU")),
   bintrayVcsUrl := Some("git@github.com:thedockingspace/InfinitU"),
   licenses += ("LGPL-3.0", url("http://www.opensource.org/licenses/LGPL-3.0")),
   publishMavenStyle := true,
   bintrayRepository := "Universe",
-  bintrayOrganization := Some("thedockingspace")
+  bintrayOrganization := Some("thedockingspace"),
+  pomExtra := (
+    <scm>
+      <url>git@github.com:TheDockingSpace/InfinitU.git</url>
+      <connection>git@github.com:TheDockingSpace/InfinitU.git</connection>
+    </scm>
+    <developers>
+      <developer>
+        <id>oswaldo</id>
+        <name>Oswaldo Dantas</name>
+        <url>http://vizualize.me/oswaldodantas</url>
+      </developer>
+    </developers>
+  )
 )
 
 lazy val InfinitU = (project in file("."))
   .settings(commonSettings)
-  .settings(publish := {})
+  .settings(publishArtifact := false)
   .aggregate(coreJS, coreJVM, quantumJS, quantumJVM)
 
 lazy val core = crossProject(JSPlatform, JVMPlatform /*, NativePlatform*/ )
