@@ -3,7 +3,7 @@ import sbtcrossproject.{crossProject, CrossType}
 enablePlugins(CopyPasteDetector, GitVersioning, GitBranchPrompt)
 
 lazy val commonSettings = Seq(
-  organization in ThisBuild := "TheDocking.Space",
+  organization in ThisBuild := "space.thedocking.infinitu",
   organizationHomepage := Some(url("http://TheDocking.Space")),
   homepage := Some(url("https://github.com/TheDockingSpace/InfinitU")),
   bintrayVcsUrl := Some("git@github.com:thedockingspace/InfinitU"),
@@ -18,7 +18,7 @@ lazy val commonSettings = Seq(
     </scm>
     <developers>
       <developer>
-        <id>oswaldo</id>
+        <id>oswaldodantas</id>
         <name>Oswaldo Dantas</name>
         <url>http://vizualize.me/oswaldodantas</url>
       </developer>
