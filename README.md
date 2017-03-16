@@ -26,4 +26,4 @@ The project was configured and organized in a way that you can run it on the JVM
 
 Stay tuned for more details soon.
 
-Meanwhile you can have a look on [how to check if the cat in the box is alive](https://github.com/TheDockingSpace/InfinitU/blob/e8759ce1193d0d59e229d590ad8a570d9a8b409a/quantum/js/src/main/scala/space/thedocking/infinitu/quantum/App.scala#L21) :)
+Meanwhile you can have a look on [how to check if the cat in the box is alive](https://github.com/TheDockingSpace/InfinitU/blob/e39188af054a3716db31f59b85160dd5ecba63d9/quantum/js/src/main/scala/space/thedocking/infinitu/quantum/App.scala#L26) :)
