@@ -53,7 +53,24 @@ lazy val quantum = crossProject(JSPlatform, JVMPlatform /*, NativePlatform*/ )
 //.nativeSettings(resolvers += Resolver.sonatypeRepo("snapshots"))
   .dependsOn(core)
 
-lazy val quantumJS  = quantum.js
+def generateIndexTask(suffix: String) = Def.task {
+  val source = baseDirectory.value / "index.html"
+  val target = (crossTarget in Compile).value / "index.html"
+  val log    = streams.value.log
+  IO.writeLines(target, IO.readLines(source).map { line =>
+    line.replace("{{quantumjs}}", s"quantumjs-$suffix.js")
+  })
+
+  log.info(s"generate with suffix: $suffix")
+}
+
+lazy val quantumJS = quantum.js
+  .settings(
+    (fastOptJS in Compile) <<= (fastOptJS in Compile).dependsOn(
+      generateIndexTask("fastopt")))
+  .settings((fullOptJS in Compile) <<= (fullOptJS in Compile).dependsOn(
+    generateIndexTask("opt")))
+
 lazy val quantumJVM = quantum.jvm
 //lazy val quantumNative = quantum.native
 
