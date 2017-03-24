@@ -14,7 +14,7 @@ This is not limited to a 3-dimensional space, but taking that as an example, the
 
 The structures should be convertible to traditional ones with some loss of precision when required, so a 2 dimension Universe with 0.5 precision would become a Vector of Vector where values from 0 and 0.5 would go to 0, 1 and 1.5 to 1, and so on.
 
-In the first release I explore a prototypical modelling that can be used to solve things like cube puzzles but I wanted to explore something more interesting: Quantum Mechanics
+In the first release I explore a prototypical modeling that can be used to solve things like cube puzzles but I wanted to explore something more interesting: Quantum Mechanics
 
 ## Quantum
 
@@ -22,7 +22,7 @@ Currently the implementation focusses on 3 main concepts: Superposition, Entangl
 
 Without going too deep into the theoretical physics that surround them, the initial abstractions would allow exploration of even more interesting directions, turning weird and counter-intuitive concepts into manageable, understandable and hopefully useful.
 
-The project was configured and organized in a way that you can run it on the JVM([ ![JVM](https://api.bintray.com/packages/thedockingspace/Universe/quantumjvm/images/download.svg) ](https://bintray.com/thedockingspace/Universe/quantumjvm/_latestVersion)), on the browser via a Scala.js cross build ([ ![Scala.js version](https://api.bintray.com/packages/thedockingspace/Universe/quantumjs/images/download.svg) ](https://bintray.com/thedockingspace/Universe/quantumjs/_latestVersion)), and eventually even nativelly.
+The project was configured and organized in a way that you can run it on the JVM([ ![JVM](https://api.bintray.com/packages/thedockingspace/Universe/quantumjvm/images/download.svg) ](https://bintray.com/thedockingspace/Universe/quantumjvm/_latestVersion)), on the browser via a Scala.js cross build ([ ![Scala.js version](https://api.bintray.com/packages/thedockingspace/Universe/quantumjs/images/download.svg) ](https://bintray.com/thedockingspace/Universe/quantumjs/_latestVersion)), and eventually even natively.
 
 Stay tuned for more details soon.
 
