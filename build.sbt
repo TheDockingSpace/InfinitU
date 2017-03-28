@@ -2,6 +2,8 @@ import sbtcrossproject.{crossProject, CrossType}
 
 enablePlugins(CopyPasteDetector, GitVersioning, GitBranchPrompt)
 
+scalaVersion := "2.12.1"
+
 lazy val commonSettings = Seq(
   organization in ThisBuild := "space.thedocking.infinitu",
   organizationHomepage := Some(url("http://TheDocking.Space")),
@@ -29,7 +31,7 @@ lazy val commonSettings = Seq(
 lazy val InfinitU = (project in file("."))
   .settings(commonSettings)
   .settings(publishArtifact := false)
-  .aggregate(coreJS, coreJVM, quantumJS, quantumJVM)
+  .aggregate(coreJS, coreJVM, quantumJS, quantumJVM, serviceJVM)
 
 lazy val core = crossProject(JSPlatform, JVMPlatform /*, NativePlatform*/ )
   .settings(commonSettings)
@@ -52,6 +54,24 @@ lazy val quantum = crossProject(JSPlatform, JVMPlatform /*, NativePlatform*/ )
               "org.specs2" %% "specs2-junit" % "3.8.8" % "test"))
 //.nativeSettings(resolvers += Resolver.sonatypeRepo("snapshots"))
   .dependsOn(core)
+
+lazy val serviceJVM = project
+  .settings(commonSettings)
+  .settings(scalaVersion := "2.12.1",
+            //scapegoatVersion := "1.1.0",
+            mainClass in (Compile, run) := Some("space.thedocking.infinitu.service.BaseService"),
+            libraryDependencies ++= Seq(
+              "com.iheart" %% "ficus" % "1.4.0",
+              "org.apache.curator" % "curator-framework" % "3.3.0",
+              "com.softwaremill.macwire" %% "macros" % "2.3.0" % "provided",
+              "com.softwaremill.macwire" %% "macrosakka" % "2.3.0" % "provided",
+              "com.softwaremill.macwire" %% "util" % "2.3.0",
+              "com.softwaremill.macwire" %% "proxy" % "2.3.0",
+              "ch.qos.logback" % "logback-classic" % "1.2.2",
+              "org.fusesource.jansi" % "jansi" % "1.15",
+              "com.typesafe.scala-logging" %% "scala-logging" % "3.5.0",
+              "org.specs2" %% "specs2-junit" % "3.8.8" % "test"))
+
 
 def generateIndexTask(suffix: String) = Def.task {
   val source = baseDirectory.value / "index.html"
