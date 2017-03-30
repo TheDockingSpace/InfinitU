@@ -62,7 +62,7 @@ lazy val serviceJVM = project
             mainClass in (Compile, run) := Some("space.thedocking.infinitu.service.BaseService"),
             libraryDependencies ++= Seq(
               "com.iheart" %% "ficus" % "1.4.0",
-              "org.apache.curator" % "curator-framework" % "3.3.0",
+              "org.apache.curator" % "curator-x-discovery" % "2.12.0",
               "com.softwaremill.macwire" %% "macros" % "2.3.0" % "provided",
               "com.softwaremill.macwire" %% "macrosakka" % "2.3.0" % "provided",
               "com.softwaremill.macwire" %% "util" % "2.3.0",
