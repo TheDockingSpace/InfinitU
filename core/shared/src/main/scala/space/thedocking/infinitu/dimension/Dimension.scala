@@ -24,13 +24,21 @@ trait Finite[V <: DimensionValue[_]] extends Finiteness[V] {
 
 }
 
-trait DimensionValue[V <: Comparable[_]] extends Ordered[DimensionValue[V]] {
+trait DimensionValue[V] extends Ordered[DimensionValue[V]] {
 
   val value: V
 
-  def minus(other: DimensionValue[V]): DimensionValue[V]
+  def minus(other: DimensionValue[_]): DimensionValue[V]
 
-  def plus(other: DimensionValue[V]): DimensionValue[V]
+  def plus(other: DimensionValue[_]): DimensionValue[V]
+
+  val minValue: DimensionValue[V]
+
+  val maxValue: DimensionValue[V]
+
+  lazy val isMinValue: Boolean = this.equals(minValue)
+
+  lazy val isMaxValue: Boolean = this.equals(maxValue)
 
   override def compare(that: DimensionValue[V]): Int = {
     val aVal = this.value.asInstanceOf[Comparable[Any]]
@@ -44,7 +52,7 @@ trait Negatable[V <: DimensionValue[_]] {
   def negate: V
 }
 
-trait DiscreteDimensionValue[V <: Comparable[_]] extends DimensionValue[V] {
+trait DiscreteDimensionValue[V] extends DimensionValue[V] {
 
   def next: DimensionValue[V]
 
