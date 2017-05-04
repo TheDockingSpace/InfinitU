@@ -3,28 +3,29 @@ package space.thedocking.infinitu.bool
 import space.thedocking.infinitu.dimension.DiscreteDimensionValue
 import space.thedocking.infinitu.dimension.DimensionValue
 import space.thedocking.infinitu.dimension.Finite
-import java.lang.{Boolean => JBoolean}
 import space.thedocking.infinitu.dimension.Negatable
 
 //TODO complete other methods, trait implementations and refactor to remove the plus minus stuff
 //for now, just a thought, roughly interpreting values as 1 or 0 for plus/minus
 
 trait BooleanValue
-//scala's boolean is not comparable???
-    extends DiscreteDimensionValue[JBoolean]
-    with Negatable[BooleanValue]
+    extends DiscreteDimensionValue[Boolean]
+    with Negatable[BooleanValue] {
+  override val maxValue = TrueValue
+  override val minValue = FalseValue
+}
 
 case object TrueValue extends BooleanValue {
 
-  override val value: JBoolean = true
+  override val value: Boolean = true
 
   override def negate = FalseValue
 
-  override def plus(other: DimensionValue[JBoolean]) =
+  override def plus(other: DimensionValue[_]) =
     TrueValue
 
-  override def minus(other: DimensionValue[JBoolean]) =
-    if (other.value) FalseValue else TrueValue
+  override def minus(other: DimensionValue[_]) =
+    if (other.asInstanceOf[BooleanValue].value) FalseValue else TrueValue
 
   override def next = FalseValue
 
@@ -34,14 +35,14 @@ case object TrueValue extends BooleanValue {
 
 case object FalseValue extends BooleanValue {
 
-  override val value: JBoolean = false
+  override val value: Boolean = false
 
   override def negate = TrueValue
 
-  override def plus(other: DimensionValue[JBoolean]) =
-    if (other.value) TrueValue else FalseValue
+  override def plus(other: DimensionValue[_]) =
+    if (other.asInstanceOf[BooleanValue].value) TrueValue else FalseValue
 
-  override def minus(other: DimensionValue[JBoolean]) =
+  override def minus(other: DimensionValue[_]) =
     FalseValue
 
   override def next = TrueValue

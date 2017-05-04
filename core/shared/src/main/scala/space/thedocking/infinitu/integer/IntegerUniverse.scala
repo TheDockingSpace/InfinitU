@@ -6,15 +6,27 @@ import space.thedocking.infinitu.universe._
 case class IntegerValue(override val value: Integer = 0)
     extends DiscreteDimensionValue[Integer] {
 
-  override def plus(other: DimensionValue[Integer]) =
-    IntegerValue(value + other.value)
+  override lazy val maxValue = IntegerValue.MaxValue
 
-  override def minus(other: DimensionValue[Integer]) =
-    IntegerValue(value - other.value)
+  override lazy val minValue = IntegerValue.MinValue
+
+  override def plus(other: DimensionValue[_]) =
+    IntegerValue(value + other.value.asInstanceOf[Integer])
+
+  override def minus(other: DimensionValue[_]) =
+    IntegerValue(value - other.value.asInstanceOf[Integer])
 
   override def next = IntegerValue(value + 1)
 
   override def previous = IntegerValue(value - 1)
+
+}
+
+case object IntegerValue {
+
+  lazy val MaxValue = IntegerValue(Integer.MAX_VALUE)
+
+  lazy val MinValue = IntegerValue(Integer.MIN_VALUE)
 
 }
 
