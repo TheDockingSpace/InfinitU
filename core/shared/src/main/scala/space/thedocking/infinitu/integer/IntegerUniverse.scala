@@ -10,15 +10,15 @@ case class IntegerValue(override val value: Integer = 0)
 
   override lazy val minValue = IntegerValue.MinValue
 
-  override def plus(other: DimensionValue[_]) =
+  override def plus(other: DimensionValue[_]): IntegerValue =
     IntegerValue(value + other.value.asInstanceOf[Integer])
 
-  override def minus(other: DimensionValue[_]) =
+  override def minus(other: DimensionValue[_]): IntegerValue =
     IntegerValue(value - other.value.asInstanceOf[Integer])
 
-  override def next = IntegerValue(value + 1)
+  override def next: IntegerValue = IntegerValue(value + 1)
 
-  override def previous = IntegerValue(value - 1)
+  override def previous: IntegerValue = IntegerValue(value - 1)
 
 }
 
@@ -36,24 +36,81 @@ case class IntegerInterval(override val left: IntegerValue,
                              DimensionIntervalInclude.Both)
     extends DiscreteDimensionInterval[Integer] {
 
-  override def next =
+  override def next: IntegerInterval =
     IntegerInterval(right,
                     right.plus(size),
-                    if (include.right) DimensionIntervalInclude.Right
-                    else DimensionIntervalInclude.Left)
+                    if (include.right) {
+                      DimensionIntervalInclude.Right
+                    }
+                    else {
+                      DimensionIntervalInclude.Left
+                    })
 
-  override def previous =
+  override def previous: IntegerInterval =
     IntegerInterval(left,
                     left.minus(size),
-                    if (include.left) DimensionIntervalInclude.Left
-                    else DimensionIntervalInclude.Right)
+                    if (include.left) {
+                      DimensionIntervalInclude.Left
+                    }
+                    else {
+                      DimensionIntervalInclude.Right
+                    })
 
 }
 
 case class IntegerDimension(override val name: String)
     extends DiscreteDimension[Integer] {
 
-  override val origin = IntegerValue(0)
+  override val origin                            = IntegerValue(0)
+  override val minValue: DimensionValue[Integer] = IntegerValue.MinValue
+  override val maxValue: DimensionValue[Integer] = IntegerValue.MaxValue
+}
+
+case class IntegerIntervalDimension(
+    override val name: String,
+    override val origin: DiscreteDimensionValue[Integer] = IntegerValue(0),
+    override val minValue: DimensionValue[Integer] = IntegerValue.MinValue,
+    override val maxValue: DimensionValue[Integer] = IntegerValue.MaxValue)
+    extends DiscreteDimension[Integer] {
+
+  //TODO move to IntervalDimension trait and/or reuse other interval related code, adding other logic operators
+  def contains(value: Int) = minValue.value <= value && value <= maxValue.value
+
+  val size = maxValue.value - minValue.value
+
+  private def offset(value: Int) = {
+    val cycles = value / size
+    value - (cycles * size)
+  }
+
+  private def localValue(value: Int) = {
+    if (contains(value)) value else {
+      val off = offset(value)
+      if (value < 0) {
+        maxValue.value - off
+      } else {
+        minValue.value + off
+      }
+    }
+  }
+
+  override def minus(value: DimensionValue[Integer], other: DimensionValue[_]): DimensionValue[Integer] = {
+    val result = (value, other) match {
+      case (IntegerValue(v1), IntegerValue(v2)) if v1 == v2 => origin
+      case (IntegerValue(v1), IntegerValue(v2)) => localValue(localValue(v1) - localValue(v2))
+      case _ => throw new RuntimeException(s"The current implementation is not ready to do $value minus $other")
+    }
+    result.asInstanceOf[DimensionValue[Integer]]
+  }
+
+  override def plus(value: DimensionValue[Integer], other: DimensionValue[_]): DimensionValue[Integer] = {
+    val result = (value, other) match {
+      case (IntegerValue(v1), IntegerValue(v2)) if v1 == v2 => origin
+      case (IntegerValue(v1), IntegerValue(v2)) => localValue(localValue(v1) + localValue(v2))
+      case _ => throw new RuntimeException(s"The current implementation is not ready to do $value plus $other")
+    }
+    result.asInstanceOf[DimensionValue[Integer]]
+  }
 
 }
 
@@ -85,7 +142,7 @@ class Integer2DUniverse[V <: Comparable[_]](
   override val dimensions = List(IntegerDimension(firstDimensionName),
                                  IntegerDimension(secondDimensionName))
 
-  override def withObjects(objects: Map[Integer2DObjectAddress, V]) = {
+  override def withObjects(objects: Map[Integer2DObjectAddress, V]): Integer2DUniverse[V] = {
     new Integer2DUniverse(name,
                           firstDimensionName,
                           secondDimensionName,
@@ -128,12 +185,20 @@ class Integer3DUniverse[V <: Comparable[_]](
                                  IntegerDimension(secondDimensionName),
                                  IntegerDimension(thirdDimensionName))
 
-  override def withObjects(objects: Map[Integer3DObjectAddress, V]) = {
+  override def withObjects(objects: Map[Integer3DObjectAddress, V]): Integer3DUniverse[V] = {
     new Integer3DUniverse(name,
                           firstDimensionName,
                           secondDimensionName,
                           thirdDimensionName,
                           objects)
   }
+
+}
+
+object IntegerImplicits {
+
+  implicit def integer2IntegerValue(v: Integer): IntegerValue = IntegerValue(v)
+
+  implicit def int2DimensionValue(v: Int): DimensionValue[Integer] = integer2IntegerValue(v)
 
 }

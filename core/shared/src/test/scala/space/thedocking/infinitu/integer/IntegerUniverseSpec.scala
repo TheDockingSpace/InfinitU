@@ -11,7 +11,7 @@ class IntegerUniverseSpec extends Specification with ShouldMatchers {
 
   "IntegerUniverse" should {
 
-    "An IntegerValue" in {
+    "define an IntegerValue" in {
       val iv = IntegerValue()
       iv.value must be equalTo (0)
 
@@ -32,6 +32,12 @@ class IntegerUniverseSpec extends Specification with ShouldMatchers {
       //why not? iv3 must be greaterThan iv
       iv3.asInstanceOf[DimensionValue[Integer]] must be greaterThan iv
       iv.asInstanceOf[DimensionValue[Integer]] must be lessThan iv3
+    }
+
+    "define an IntegerIntervalDimension" in {
+      val iid = IntegerIntervalDimension(name="small test dimension", minValue=IntegerValue(), maxValue= IntegerValue(2))
+      iid must not beNull;
+      iid.plus(IntegerValue(), IntegerValue(1)) must be equalTo IntegerValue(1)
     }
 
   }

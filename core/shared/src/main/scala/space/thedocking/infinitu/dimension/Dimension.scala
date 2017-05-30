@@ -146,6 +146,20 @@ trait Dimension[V <: Comparable[_]] {
   def accept(someValue: DimensionValue[V]) =
     someValue.value.getClass.equals(origin.value.getClass)
 
+  def minus(value: DimensionValue[V], other: DimensionValue[_]): DimensionValue[V] = value.minus(other)
+
+  def plus(value: DimensionValue[V], other: DimensionValue[_]): DimensionValue[V] = value.plus(other)
+
+  val minValue: DimensionValue[V]
+
+  val maxValue: DimensionValue[V]
+
+  def isMinValue(value: DimensionValue[_]): Boolean = value.equals(minValue)
+
+  def isMaxValue(value: DimensionValue[_]): Boolean = value.equals(maxValue)
+
+  def compare(value: DimensionValue[V], other: DimensionValue[V]): Int = value.compare(other)
+
   override def toString = name
 
 }

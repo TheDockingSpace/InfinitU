@@ -1,6 +1,5 @@
 package space.thedocking.infinitu.list
 
-import space.thedocking.infinitu.dimension.DimensionValue
 import org.junit.runner.RunWith
 import org.specs2.matcher.ShouldMatchers
 import org.specs2.mutable.Specification
