@@ -106,10 +106,10 @@ case class IntegerIntervalDimension(
   override def plus(value: DimensionValue[Integer], other: DimensionValue[_]): DimensionValue[Integer] = {
     val result = (value, other) match {
       case (IntegerValue(v1), IntegerValue(v2)) if v1 == v2 => origin
-      case (IntegerValue(v1), IntegerValue(v2)) => localValue(localValue(v1) + localValue(v2))
+      case (IntegerValue(v1), IntegerValue(v2)) => IntegerValue(localValue(v1) + localValue(v2))
       case _ => throw new RuntimeException(s"The current implementation is not ready to do $value plus $other")
     }
-    result.asInstanceOf[DimensionValue[Integer]]
+    result
   }
 
 }
