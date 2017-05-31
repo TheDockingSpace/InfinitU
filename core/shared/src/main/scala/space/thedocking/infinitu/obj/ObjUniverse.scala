@@ -4,33 +4,56 @@ import space.thedocking.infinitu.dimension._
 import space.thedocking.infinitu.integer.IntegerIntervalDimension
 import space.thedocking.infinitu.integer.IntegerImplicits._
 import space.thedocking.infinitu.universe._
+import space.thedocking.infinitu.integer.IntegerValue
 
-class ObjectValue[V](
+case class ObjectValue[V](
     override val value: Option[V] = None,
-                    val allValues: List[V] = Nil,
-                    val index: Int = 0
-) extends DiscreteDimensionValue[Option[V]] {
+    val allValues: List[V] = Nil) extends DiscreteDimensionValue[Option[V]] {
+
+  def isCompatible(value: Option[V] = None): Boolean = {
+    //TODO refactor into a violation list...
+    value.isEmpty || allValues.contains(value.get)
+  }
 
   def checkRequirements(value: Option[V] = None) =
-  require(value.isEmpty || allValues.contains(value.get))
+    require(isCompatible(value))
 
   checkRequirements()
 
-  val indexes = new IntegerIntervalDimension(name = "object value indexes",
-  minValue = 0,
-  maxValue = allValues.size - 1)
+  val indexDimension = new IntegerIntervalDimension(name = "object value indexes",
+    minValue = 0,
+    maxValue = allValues.size - 1)
+
+  private def indexes(other: DimensionValue[_]) = {
+    val otherIndex = IntegerValue {
+      val v: Integer = other match {
+        case IntegerValue(i) if i < allValues.size => i
+        case ObjectValue(o: Option[V], _) if isCompatible(o) => allValues.indexOf(o.get)
+        case _ => throw new RuntimeException(s"The current implementation is not ready to do $value minus $other")
+      }
+      v
+    }
+    val thisIndex = IntegerValue(value.map(allValues.indexOf(_)).getOrElse(0))
+    (thisIndex, otherIndex)
+  }
+
+  private def operate(operation: (DimensionValue[Integer], DimensionValue[_]) => DimensionValue[Integer],
+    other: DimensionValue[_]) = {
+    val idx = indexes(other)
+    copy(value = Option[V](allValues(operation.apply(idx._1, idx._2).value)))
+  }
 
   //TODO general refactoring moving operators to trait...
-  override def plus(other: DimensionValue[_]): ObjectValue[V] = this
+  override def plus(other: DimensionValue[_]): ObjectValue[V] = operate(indexDimension.plus, other)
 
-  override def minus(other: DimensionValue[_]): ObjectValue[V] = this
+  override def minus(other: DimensionValue[_]): ObjectValue[V] = operate(indexDimension.minus, other)
 
-  override lazy val minValue: DimensionValue[Option[V]] = this
+  override lazy val minValue: DimensionValue[Option[V]] = copy(value = allValues.headOption)
 
-  override lazy val maxValue: DimensionValue[Option[V]] = this
+  override lazy val maxValue: DimensionValue[Option[V]] = copy(value = allValues.reverse.headOption)
 
-  override def next: DimensionValue[Option[V]] = this
+  override def next: DimensionValue[Option[V]] = plus(1)
 
-  override def previous: DimensionValue[Option[V]] = this
+  override def previous: DimensionValue[Option[V]] = minus(1)
 
 }

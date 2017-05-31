@@ -27,6 +27,8 @@ case object IntegerValue {
   lazy val MaxValue = IntegerValue(Integer.MAX_VALUE)
 
   lazy val MinValue = IntegerValue(Integer.MIN_VALUE)
+  
+  def apply(v: Int): IntegerValue = IntegerValue(Integer.valueOf(v))
 
 }
 
@@ -103,6 +105,7 @@ case class IntegerIntervalDimension(
     result.asInstanceOf[DimensionValue[Integer]]
   }
 
+  //TODO keep track of turns ("z + b = ba")
   override def plus(value: DimensionValue[Integer], other: DimensionValue[_]): DimensionValue[Integer] = {
     val result = (value, other) match {
       case (IntegerValue(v1), IntegerValue(v2)) if v1 == v2 => origin
