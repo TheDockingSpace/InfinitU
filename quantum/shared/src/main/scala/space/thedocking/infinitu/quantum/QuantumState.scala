@@ -106,12 +106,16 @@ object Plotter {
       case (k, v) =>
         (QuantumState.prettyValue(k), v)
     }
+  
+  def plotLine(label: String, padding: Int, maxBar: Int, value: Int, maxCount: Int) = s"${label
+        .padTo(padding, " ")
+        .mkString("")} ${"=" * (maxBar * value / maxCount)}"
 
-  def plot[V](values: Map[CollapsedValue[V], Int]): Seq[String] = {
-    val maxCount   = values.map(_._2).max
-    val totalCount = values.map(_._2).sum
+  def plotLines(lines: Map[_ <: CollapsedValue[_], Int], values: Seq[_] = Seq()): Seq[String] = {
+    val maxCount   = lines.map(_._2).max
+    val totalCount = lines.map(_._2).sum
 
-    val raw: Map[String, Int] = values.map(prettyEntry)
+    val raw: Map[String, Int] = lines.map(prettyEntry)
     val maxLabel              = raw.map(_._1.size).max
     val sorted                = raw.toSeq.sortBy(_._1)
     val maxBar                = 20
@@ -120,10 +124,10 @@ object Plotter {
       val label   = f"$k (${100D * v / totalCount}%3.2f%%)"
       val padding = maxLabel + (label.size - k.size)
     } yield
-      s"${label
-        .padTo(padding, " ")
-        .mkString("")} ${"=" * (maxBar * v / maxCount)}"
+      plotLine(label, padding, maxBar, v, maxCount)
   }
+  
+  def plot(lines: Map[_ <: CollapsedValue[_], Int], values: Seq[_] = Seq()): String = plotLines(lines, values).mkString("\n")
 
 }
 
@@ -242,10 +246,12 @@ case class CNotGate(
 //TODO split redundant/shared logic and specific classes in different files and packages
 
 object CollapsedObjectValue {
-  def apply[V](value: V): CollapsedObjectValue[V] = CollapsedObjectValue(ObjectValue(value))
+  def apply[V](value: V): CollapsedObjectValue[V] =
+    CollapsedObjectValue(ObjectValue(value))
 }
 
-case class CollapsedObjectValue[V]( override val value: ObjectValue[V]) extends CollapsedValue[ObjectValue[V]]
+case class CollapsedObjectValue[V](override val value: ObjectValue[V])
+    extends CollapsedValue[ObjectValue[V]]
 
 case class ObjectSuperposition[V](override val allValues: Seq[ObjectValue[V]])
     extends Superposition[ObjectValue[V]]

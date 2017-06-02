@@ -21,7 +21,9 @@ trait Finite[V <: DimensionValue[_]] extends Finiteness[V] {
 
   override def randomValue: V = {
     val values = allValues
-    require(values.size > 0, "Need at least one value on the dimension to be able to get it randomly :)")
+    require(
+      values.size > 0,
+      "Need at least one value on the dimension to be able to get it randomly :)")
     //TODO replace by logging framework
     if (values.size == 1) {
       val result = values(0)
@@ -157,9 +159,11 @@ trait Dimension[V <: Comparable[_]] {
   def accept(someValue: DimensionValue[V]) =
     someValue.value.getClass.equals(origin.value.getClass)
 
-  def minus(value: DimensionValue[V], other: DimensionValue[_]): DimensionValue[V] = value.minus(other)
+  def minus(value: DimensionValue[V],
+            other: DimensionValue[_]): DimensionValue[V] = value.minus(other)
 
-  def plus(value: DimensionValue[V], other: DimensionValue[_]): DimensionValue[V] = value.plus(other)
+  def plus(value: DimensionValue[V],
+           other: DimensionValue[_]): DimensionValue[V] = value.plus(other)
 
   val minValue: DimensionValue[V]
 
@@ -169,7 +173,8 @@ trait Dimension[V <: Comparable[_]] {
 
   def isMaxValue(value: DimensionValue[_]): Boolean = value.equals(maxValue)
 
-  def compare(value: DimensionValue[V], other: DimensionValue[V]): Int = value.compare(other)
+  def compare(value: DimensionValue[V], other: DimensionValue[V]): Int =
+    value.compare(other)
 
   override def toString = name
 
