@@ -6,9 +6,13 @@ import space.thedocking.infinitu.integer.IntegerImplicits._
 import space.thedocking.infinitu.universe._
 import space.thedocking.infinitu.integer.IntegerValue
 
+object ObjectValue {
+  def apply[V](value: V): ObjectValue[V] = ObjectValue(Option(value), Seq(value))
+}
+
 case class ObjectValue[V](
     override val value: Option[V] = None,
-    val allValues: List[V] = Nil) extends DiscreteDimensionValue[Option[V]] {
+    val allValues: Seq[V] = Nil) extends DiscreteDimensionValue[Option[V]] {
 
   def isCompatible(value: Option[V] = None): Boolean = {
     //TODO refactor into a violation list...
@@ -55,5 +59,13 @@ case class ObjectValue[V](
   override def next: DimensionValue[Option[V]] = plus(1)
 
   override def previous: DimensionValue[Option[V]] = minus(1)
+
+}
+
+object ObjectImplicits {
+
+  implicit def object2ObjectValue[V](v: V): ObjectValue[V] = ObjectValue(v)
+
+  implicit def objectSeq2ObjectValueSeq[V](v: Seq[V]): Seq[ObjectValue[V]] = v.map(object2ObjectValue)
 
 }

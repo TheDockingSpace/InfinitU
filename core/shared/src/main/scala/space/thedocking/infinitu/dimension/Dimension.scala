@@ -1,5 +1,7 @@
 package space.thedocking.infinitu.dimension
 
+import scala.util.Random
+
 //TODO bake finiteness in values and dimensions?
 abstract sealed trait Finiteness[V] {
 
@@ -19,7 +21,16 @@ trait Finite[V <: DimensionValue[_]] extends Finiteness[V] {
 
   override def randomValue: V = {
     val values = allValues
-    values.drop(scala.util.Random.nextInt(values.size)).head
+    require(values.size > 0, "Need at least one value on the dimension to be able to get it randomly :)")
+    //TODO replace by logging framework
+    if (values.size == 1) {
+      val result = values(0)
+      println(s"The only known value in dimension $this was ${values(0)}")
+      result
+    } else {
+      val reminder = values.drop(Random.nextInt(values.size))
+      reminder.head
+    }
   }
 
 }

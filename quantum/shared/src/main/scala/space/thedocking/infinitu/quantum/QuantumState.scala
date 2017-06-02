@@ -6,6 +6,7 @@ import space.thedocking.infinitu.dimension.Finite
 import space.thedocking.infinitu.bool.TrueValue
 import space.thedocking.infinitu.bool.FalseValue
 import space.thedocking.infinitu.dimension.Finiteness
+import space.thedocking.infinitu.obj.ObjectValue
 
 sealed trait QuantumState {
 
@@ -232,6 +233,61 @@ case class CNotGate(
       case TrueValue :: other :: Nil => TrueValue :: other.negate :: Nil
       case _                         => values
     })
+  }
+
+}
+
+//Object specific....
+
+//TODO split redundant/shared logic and specific classes in different files and packages
+
+object CollapsedObjectValue {
+  def apply[V](value: V): CollapsedObjectValue[V] = CollapsedObjectValue(ObjectValue(value))
+}
+
+case class CollapsedObjectValue[V]( override val value: ObjectValue[V]) extends CollapsedValue[ObjectValue[V]]
+
+case class ObjectSuperposition[V](override val allValues: Seq[ObjectValue[V]])
+    extends Superposition[ObjectValue[V]]
+    //TODO refactor to support infinite dimension superposition
+    with Finite[ObjectValue[V]] {
+
+  override def collapsed(value: ObjectValue[V]) = CollapsedObjectValue(value)
+
+  //TODO This should go to a registry
+  val defaultCollapser: Collapser[Collapsable[ObjectValue[V], ObjectValue[V]],
+                                  ObjectValue[V]] =
+    new RandomFiniteSuperpositionCollapser
+
+  //TODO In the future, write a proper DSL with useful shortcuts and syntatic sugar
+  def collapse: Option[V] = this.collapse(defaultCollapser).value.value
+
+  def collapse(times: Int): Map[Option[V], Int] =
+    this.collapse(defaultCollapser, times).map {
+      case (k, v) =>
+        val b: Option[V] = k.value.value
+        (b, v)
+    }
+
+}
+
+case class ObjectEntanglementCollapser[V]()
+    extends Collapser[Collapsable[List[ObjectValue[V]], List[ObjectValue[V]]],
+                      List[ObjectValue[V]]] {
+
+  override def collapse(
+      value: Collapsable[List[ObjectValue[V]], List[ObjectValue[V]]])
+    : CollapsedValue[List[ObjectValue[V]]] = {
+    val entanglement =
+      value.asInstanceOf[HomogeneousEntanglement[ObjectValue[V]]]
+    val entangled = entanglement.entangledCollapsers
+      .zip(entanglement.entangledStates)
+      .map {
+        case (collapser, state) =>
+          state.collapse(collapser).value
+      }
+      .toList
+    entanglement.collapsed(entangled)
   }
 
 }
