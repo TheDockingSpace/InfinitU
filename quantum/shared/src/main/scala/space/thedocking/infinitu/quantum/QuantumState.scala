@@ -22,13 +22,15 @@ sealed trait QuantumState {
 
 }
 
-trait CollapsedValue[V] extends QuantumState {
-
-  val value: V
+trait CollapsedValue[V] extends DimensionValue[V] with QuantumState {
 
   override val isCollapsed = true
 
   override lazy val prettyValue = QuantumState.prettyValue(value)
+
+  override lazy val isMinValue: Boolean = this.value.equals(minValue)
+
+  override lazy val isMaxValue: Boolean = this.value.equals(maxValue)
 
 }
 
@@ -106,12 +108,18 @@ object Plotter {
       case (k, v) =>
         (QuantumState.prettyValue(k), v)
     }
-  
-  def plotLine(label: String, padding: Int, maxBar: Int, value: Int, maxCount: Int) = s"${label
-        .padTo(padding, " ")
-        .mkString("")} ${"=" * (maxBar * value / maxCount)}"
 
-  def plotLines(lines: Map[_ <: CollapsedValue[_], Int], values: Seq[_] = Seq()): Seq[String] = {
+  def plotLine(label: String,
+               padding: Int,
+               maxBar: Int,
+               value: Int,
+               maxCount: Int) =
+    s"${label
+      .padTo(padding, " ")
+      .mkString("")} ${"=" * (maxBar * value / maxCount)}"
+
+  def plotLines(lines: Map[_ <: CollapsedValue[_], Int],
+                values: Seq[_] = Seq()): Seq[String] = {
     val maxCount   = lines.map(_._2).max
     val totalCount = lines.map(_._2).sum
 
@@ -123,18 +131,23 @@ object Plotter {
       (k, v) <- sorted
       val label   = f"$k (${100D * v / totalCount}%3.2f%%)"
       val padding = maxLabel + (label.size - k.size)
-    } yield
-      plotLine(label, padding, maxBar, v, maxCount)
+    } yield plotLine(label, padding, maxBar, v, maxCount)
   }
-  
-  def plot(lines: Map[_ <: CollapsedValue[_], Int], values: Seq[_] = Seq()): String = plotLines(lines, values).mkString("\n")
+
+  def plot(lines: Map[_ <: CollapsedValue[_], Int],
+           values: Seq[_] = Seq()): String =
+    plotLines(lines, values).mkString("\n")
 
 }
 
 object QuantumState {
 
-  implicit def toCollapsed(value: Boolean): CollapsedBooleanValue =
-    if (value) CollapsedTrueValue else CollapsedFalseValue
+  implicit def toCollapsed(value: Boolean): CollapsedBooleanValue = {
+    if (value)
+      CollapsedTrueValue
+    else
+      CollapsedFalseValue
+  }
 
   implicit def toSuperposition(b: Boolean.type): BooleanSuperposition =
     BooleanSuperposition()
@@ -148,11 +161,39 @@ object QuantumState {
       case _                    => value.toString
     }
 
+  def unwrapValue[V](value: Any): V = {
+    val v = value match {
+      case Some(o)              => unwrapValue(o)
+      case v: DimensionValue[_] => unwrapValue(v.value)
+      case _                    => value
+    }
+    v.asInstanceOf[V]
+  }
+
 }
 
 //Boolean specific....
 
-trait CollapsedBooleanValue extends CollapsedValue[BooleanValue]
+trait CollapsedBooleanValue extends CollapsedValue[BooleanValue] {
+
+  override def minus(other: DimensionValue[_]): DimensionValue[BooleanValue] =
+    CollapsedBooleanValue(BooleanValue(this.value.value).minus(other))
+
+  override def plus(other: DimensionValue[_]): DimensionValue[BooleanValue] =
+    CollapsedBooleanValue(BooleanValue(this.value.value).plus(other))
+
+  override val minValue: DimensionValue[BooleanValue] = CollapsedBooleanValue(
+    FalseValue)
+
+  override val maxValue: DimensionValue[BooleanValue] = CollapsedBooleanValue(
+    TrueValue)
+
+}
+
+object CollapsedBooleanValue {
+  def apply(value: DimensionValue[Boolean]) =
+    if (value.value) CollapsedTrueValue else CollapsedFalseValue
+}
 
 object CollapsedTrueValue extends CollapsedBooleanValue {
   override val value: BooleanValue = TrueValue
@@ -164,6 +205,18 @@ object CollapsedFalseValue extends CollapsedBooleanValue {
 
 case class CollapsedBooleanValues(override val value: List[BooleanValue])
     extends CollapsedValue[List[BooleanValue]] {
+
+  override def minus(
+      other: DimensionValue[_]): DimensionValue[List[BooleanValue]] = ???
+
+  override def plus(
+      other: DimensionValue[_]): DimensionValue[List[BooleanValue]] = ???
+
+  override lazy val minValue: DimensionValue[List[BooleanValue]] =
+    CollapsedBooleanValues(List.fill(value.size)(FalseValue))
+
+  override lazy val maxValue: DimensionValue[List[BooleanValue]] =
+    CollapsedBooleanValues(List.fill(value.size)(TrueValue))
 
   override lazy val prettyValue =
     value.map(v => if (v.value) "1" else "0").mkString("")
@@ -245,13 +298,23 @@ case class CNotGate(
 
 //TODO split redundant/shared logic and specific classes in different files and packages
 
-object CollapsedObjectValue {
-  def apply[V](value: V): CollapsedObjectValue[V] =
-    CollapsedObjectValue(ObjectValue(value))
-}
-
 case class CollapsedObjectValue[V](override val value: ObjectValue[V])
-    extends CollapsedValue[ObjectValue[V]]
+    extends CollapsedValue[ObjectValue[V]] {
+
+  override def minus(
+      other: DimensionValue[_]): DimensionValue[ObjectValue[V]] =
+    CollapsedObjectValue[V](ObjectValue[V](this.value.value).minus(other))
+
+  override def plus(other: DimensionValue[_]): DimensionValue[ObjectValue[V]] =
+    CollapsedObjectValue[V](ObjectValue[V](this.value.value).plus(other))
+
+  override lazy val minValue: DimensionValue[ObjectValue[V]] =
+    CollapsedObjectValue[V](ObjectValue[V](value.minValue.value.get))
+
+  override lazy val maxValue: DimensionValue[ObjectValue[V]] =
+    CollapsedObjectValue[V](ObjectValue[V](value.maxValue.value.get))
+
+}
 
 case class ObjectSuperposition[V](override val allValues: Seq[ObjectValue[V]])
     extends Superposition[ObjectValue[V]]

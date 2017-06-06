@@ -62,32 +62,43 @@ class QuantumStateSpec extends Specification with ShouldMatchers {
       override val label = "Maybe"
     }
 
+    def assertEquallyDistributed(values: Seq[_],
+                                 lines: Map[_ <: CollapsedValue[_], Int],
+                                 totalRuns: Int) = {
+      val total = lines.map(_._2).sum
+      total must beEqualTo(totalRuns)
+      val reference = lines.values.head
+      val delta     = 2 * (totalRuns / 100)
+      forall(values) { v =>
+        lines.keys.find { c =>
+          v.equals(unwrapValue(c))
+        }.isDefined aka s"value $v should be among the keys" must beTrue
+      }
+      forall(lines) {
+        case (value, times) =>
+          times must beCloseTo(reference, delta)
+      }
+    }
+
     //TODO add cases using the class directly, without using generics
     //TODO complete and test heterogeneous superposition...
     val objCollapser: Collapser[
       Collapsable[ObjectValue[MockState], ObjectValue[MockState]],
       ObjectValue[MockState]] =
       new RandomFiniteSuperpositionCollapser
-      //TODO qudit entanglement example
+    //TODO qudit entanglement example
     val objEntanglementCollapser: Collapser[
       Collapsable[List[ObjectValue[MockState]], List[ObjectValue[MockState]]],
       List[ObjectValue[MockState]]] = ObjectEntanglementCollapser()
 
     "plot a qudit result with sealed trait" in {
       val times  = 10000
-      val delta  = 2 * (times / 100)
       val values = Seq(YesState, NoState, MaybeState)
       val lines  = ObjectSuperposition(values).collapse(objCollapser, times)
       println(plot(lines))
-      val total = lines.map(_._2).sum
-      total must beEqualTo(times)
       //TODO add some implicits to avoid the constructors
       //TODO example iterating over enum
-      val yesLines   = lines.getOrElse(CollapsedObjectValue(YesState), 0)
-      val noLines    = lines.getOrElse(CollapsedObjectValue(NoState), 0)
-      val maybeLines = lines.getOrElse(CollapsedObjectValue(MaybeState), 0)
-      yesLines must beCloseTo(noLines, delta)
-      noLines must beCloseTo(maybeLines, delta)
+      assertEquallyDistributed(values, lines, times)
     }
 
     val objectCollapser: Collapser[
@@ -96,13 +107,12 @@ class QuantumStateSpec extends Specification with ShouldMatchers {
       new RandomFiniteSuperpositionCollapser
 
     "plot a qudit result with objects" in {
-      val times  = 10000
-      val delta  = 2 * (times / 100)
-      val values = Seq("can" :: "we" :: "do" :: "it?" :: Nil, YesState, "WE CAN!!")
-      val lines  = ObjectSuperposition(values).collapse(objectCollapser, times)
+      val times = 10000
+      val values =
+        Seq("can" :: "we" :: "do" :: "it?" :: Nil, YesState, "WE CAN!!")
+      val lines = ObjectSuperposition(values).collapse(objectCollapser, times)
       println(plot(lines))
-      val total = lines.map(_._2).sum
-      total must beEqualTo(times)
+      assertEquallyDistributed(values, lines, times)
     }
 
   }

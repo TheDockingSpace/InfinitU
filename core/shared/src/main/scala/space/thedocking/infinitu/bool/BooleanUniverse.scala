@@ -15,9 +15,14 @@ trait BooleanValue
   override val minValue = FalseValue
 }
 
+object BooleanValue {
+  def apply(value: Boolean): BooleanValue =
+    if (value) TrueValue else FalseValue
+}
+
 case object TrueValue extends BooleanValue {
 
-  override val value: Boolean = true
+  override lazy val value: Boolean = true
 
   override def negate = FalseValue
 
@@ -35,7 +40,7 @@ case object TrueValue extends BooleanValue {
 
 case object FalseValue extends BooleanValue {
 
-  override val value: Boolean = false
+  override lazy val value: Boolean = false
 
   override def negate = TrueValue
 
