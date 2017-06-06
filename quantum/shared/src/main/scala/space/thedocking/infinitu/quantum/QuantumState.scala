@@ -109,34 +109,52 @@ object Plotter {
         (QuantumState.prettyValue(k), v)
     }
 
-  def plotLine(label: String,
-               padding: Int,
+  def plotLine(totalCount: Int,
+               maxLabel: Int,
                maxBar: Int,
+               key: String,
                value: Int,
-               maxCount: Int) =
+               maxCount: Int) = {
+    val label   = f"$key (${100D * value / totalCount}%3.2f%%)"
+    val padding = maxLabel + (label.size - key.size)
     s"${label
       .padTo(padding, " ")
       .mkString("")} ${"=" * (maxBar * value / maxCount)}"
+  }
 
   def plotLines(lines: Map[_ <: CollapsedValue[_], Int],
-                values: Seq[_] = Seq()): Seq[String] = {
-    val maxCount   = lines.map(_._2).max
-    val totalCount = lines.map(_._2).sum
+                sortByKey: Boolean = true,
+                totalCount: Int,
+                maxCount: Int): Seq[String] = {
 
     val raw: Map[String, Int] = lines.map(prettyEntry)
     val maxLabel              = raw.map(_._1.size).max
-    val sorted                = raw.toSeq.sortBy(_._1)
     val maxBar                = 20
-    for {
-      (k, v) <- sorted
-      val label   = f"$k (${100D * v / totalCount}%3.2f%%)"
-      val padding = maxLabel + (label.size - k.size)
-    } yield plotLine(label, padding, maxBar, v, maxCount)
+    val sorted = if (sortByKey) {
+      raw.toSeq.sortBy(_._1)
+    } else {
+      raw.toSeq
+    }
+    sorted.map {
+      case (k, v) =>
+        plotLine(totalCount, maxLabel, maxBar, k, v, maxCount)
+    }
   }
 
   def plot(lines: Map[_ <: CollapsedValue[_], Int],
-           values: Seq[_] = Seq()): String =
-    plotLines(lines, values).mkString("\n")
+           sortByKey: Boolean = true,
+           addHeader: Boolean = true): String = {
+    val maxCount   = lines.map(_._2).max
+    val totalCount = lines.map(_._2).sum
+    val header: Seq[String] = if (addHeader) {
+    	//TODO replace sortByKey by sealed trait and print selection on header
+      Seq(
+        s"\n---Results for $totalCount runs with ${lines.size} states (max: $maxCount)---")
+    } else { Seq.empty }
+    //TODO move totalCount and maxCount to some metadata structure
+    { header ++ plotLines(lines, sortByKey, totalCount, maxCount) }
+      .mkString("\n")
+  }
 
 }
 

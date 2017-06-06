@@ -26,7 +26,7 @@ class QuantumStateSpec extends Specification with ShouldMatchers {
 
     "plot a qubit result" in {
       val times = 10000
-      val delta = 2 * (times / 100)
+      val delta = 3 * (times / 100)
       val lines = BooleanSuperposition().collapse(booleanCollapser, times)
       println(plot(lines))
       val total = lines.map(_._2).sum
@@ -111,7 +111,7 @@ class QuantumStateSpec extends Specification with ShouldMatchers {
       val values =
         Seq("can" :: "we" :: "do" :: "it?" :: Nil, YesState, "WE CAN!!")
       val lines = ObjectSuperposition(values).collapse(objectCollapser, times)
-      println(plot(lines))
+      println(plot(lines, sortByKey = false))
       assertEquallyDistributed(values, lines, times)
     }
 
