@@ -1,5 +1,7 @@
 # InfinitU - Infinite Universes
 
+[![Join the chat at https://gitter.im/TheDockingSpace/InfinitU](https://badges.gitter.im/TheDockingSpace/InfinitU.svg)](https://gitter.im/TheDockingSpace/InfinitU?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 > Cogito ergo sum
 > 
 > -- <cite>René Descartes</cite>
