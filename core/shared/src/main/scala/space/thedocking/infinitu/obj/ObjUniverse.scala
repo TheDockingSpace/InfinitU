@@ -81,3 +81,51 @@ object ObjectImplicits {
     v.map(object2ObjectValue)
 
 }
+
+case class ObjectDimension[V <: Comparable[_]](
+    override val name: String,
+    val values: List[V],
+    override val origin: DiscreteDimensionValue[V])
+    extends DiscreteDimension[V] {
+
+  override val minValue: DimensionValue[V] = ObjectValue(values.head).asInstanceOf
+  override val maxValue: DimensionValue[V] = ObjectValue(
+    values(values.size - 1)).asInstanceOf
+}
+
+case class Object1DObjectAddress[V <: Comparable[_]](
+    val firstValue: V,
+    override val dimensions: List[Dimension[_]])
+    extends ObjectAddress {
+
+  override val values =
+    List(ObjectValue(firstValue))
+
+  override def withValues[A <: ObjectAddress](
+      values: List[DimensionValue[_]]): A =
+    Object1DObjectAddress(values(0).asInstanceOf[V], dimensions)
+      .asInstanceOf[A]
+
+}
+
+class Object1DUniverse[A <: Comparable[_], V <: Comparable[_]](
+    override val name: String = "Object1DUniverse",
+    val dimensionName: String = "x",
+    override val objects: Map[Object1DObjectAddress[A], _ <: V] =
+      Map[Object1DObjectAddress[A], V]())
+    extends Universe[Object1DObjectAddress[A], V] {
+
+  override val dimensions = buildDimensions
+
+  private def buildDimensions: List[Dimension[_]] = {
+    val addresses  = objects.keys.map(_.values(0).value.get).toList
+    val firstValue = ObjectValue(objects.keys.head.firstValue)
+    List(ObjectDimension[A](dimensionName, addresses, firstValue.asInstanceOf))
+  }
+
+  override def withObjects(
+      objects: Map[Object1DObjectAddress[A], V]): Object1DUniverse[A, V] = {
+    new Object1DUniverse(name, dimensionName, objects)
+  }
+
+}

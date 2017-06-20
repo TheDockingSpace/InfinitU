@@ -147,7 +147,7 @@ object Plotter {
     val maxCount   = lines.map(_._2).max
     val totalCount = lines.map(_._2).sum
     val header: Seq[String] = if (addHeader) {
-    	//TODO replace sortByKey by sealed trait and print selection on header
+      //TODO replace sortByKey by sealed trait and print selection on header
       Seq(
         s"\n---Results for $totalCount runs with ${lines.size} states (max: $maxCount)---")
     } else { Seq.empty }

@@ -120,6 +120,36 @@ case class IntegerIntervalDimension(
 
 }
 
+case class Integer1DObjectAddress(val firstValue: Integer = 0,
+                                  override val dimensions: List[Dimension[_]] =
+                                    List(IntegerDimension("x")))
+    extends ObjectAddress {
+
+  override val values =
+    List(IntegerValue(firstValue))
+
+  override def withValues[A <: ObjectAddress](
+      values: List[DimensionValue[_]]): A =
+    Integer1DObjectAddress(values(0).asInstanceOf[Integer], dimensions)
+      .asInstanceOf[A]
+
+}
+
+class Integer1DUniverse[V <: Comparable[_]](
+    override val name: String = "Integer1DUniverse",
+    val dimensionName: String = "x",
+    override val objects: Map[Integer1DObjectAddress, _ <: V] = Map())
+    extends Universe[Integer1DObjectAddress, V] {
+
+  override val dimensions = List(IntegerDimension(dimensionName))
+
+  override def withObjects(
+      objects: Map[Integer1DObjectAddress, V]): Integer1DUniverse[V] = {
+    new Integer1DUniverse(name, dimensionName, objects)
+  }
+
+}
+
 case class Integer2DObjectAddress(
     val firstValue: Integer = 0,
     val secondValue: Integer = 0,
