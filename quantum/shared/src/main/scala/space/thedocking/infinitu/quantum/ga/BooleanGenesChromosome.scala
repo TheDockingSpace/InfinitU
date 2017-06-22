@@ -8,9 +8,6 @@ case class BooleanGenesChromosome(
     override val genes: Universe[Integer1DObjectAddress, JBoolean])
     extends Chromosome[Integer1DObjectAddress, JBoolean] {
 
-  override def crossover(other: Chromosome[Integer1DObjectAddress, JBoolean]) =
-    ???
-  override def mutate = ???
   override def compareTo(other: Chromosome[Integer1DObjectAddress, JBoolean]) =
     ???
 
