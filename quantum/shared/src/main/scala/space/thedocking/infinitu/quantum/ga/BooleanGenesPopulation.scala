@@ -9,31 +9,24 @@ class BooleanGenesPopulation(
                                        BooleanGenesChromosome])
     extends Population[Integer1DObjectAddress, BooleanGenesChromosome] {
 
-  override def evolve(times: Int) = {
+  override def evolve(parameters: GenerationParameters[Integer1DObjectAddress,
+                                                       BooleanGenesChromosome],
+                      times: Int) = {
     for (generation <- 1 to times) {}
     ???
   }
 
 }
 
-class BooleanGenesAnalyzedPopulation(
+case class BooleanGenesAnalyzedPopulation(
     override val individuals: Universe[Integer1DObjectAddress,
                                        BooleanGenesChromosome])
     extends BooleanGenesPopulation(individuals)
     with AnalyzedPopulation[Integer1DObjectAddress, BooleanGenesChromosome] {
 
-  override def newGeneration[V <: DiscreteDimensionValue[_]](
-      fitness: Either[IndividualFitness[BooleanGenesChromosome, V],
-                      RelativeFitness[BooleanGenesChromosome,
-                                      Population[Integer1DObjectAddress,
-                                                 BooleanGenesChromosome],
-                                      V]],
-      //TODO support multi-individual crossover
-      pairSelection: ChromosomeSelection[BooleanGenesChromosome],
-      crossover: ChromosomeOperation[BooleanGenesChromosome],
-      mutagen: Mutagen[BooleanGenesChromosome],
-      surviverSelection: ChromosomeGroupSelection[
-        _ <: Universe[_ <: Integer1DObjectAddress,
-                      _ <: BooleanGenesChromosome]])
-    : AnalyzedPopulation[Integer1DObjectAddress, BooleanGenesChromosome]
+  override def newGeneration(
+      parameters: GenerationParameters[Integer1DObjectAddress,
+                                       BooleanGenesChromosome])
+    : AnalyzedPopulation[Integer1DObjectAddress, BooleanGenesChromosome] = ???
+
 }

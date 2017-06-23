@@ -26,20 +26,26 @@ trait ChromosomeGroupSelection[U <: Universe[_, _]] {
   def apply(individuals: U): U
 }
 
+class GenerationParameters[A <: ObjectAddress, C <: Chromosome[A, _]](
+    val fitness: Either[
+      IndividualFitness[C, _ <: DiscreteDimensionValue[_]],
+      RelativeFitness[C, Population[A, C], _ <: DiscreteDimensionValue[_]]],
+    //TODO support multi-individual crossover
+    val pairSelection: ChromosomeSelection[C],
+    val crossover: ChromosomeOperation[C],
+    val mutagen: Mutagen[C],
+    val surviverSelection: ChromosomeGroupSelection[
+      _ <: Universe[_ <: A, _ <: C]]
+)
+
 trait Population[A <: ObjectAddress, C <: Chromosome[A, _]] {
   def individuals: Universe[A, C]
-  def evolve(times: Int): Seq[AnalyzedPopulation[A, C]]
+  def evolve(parameters: GenerationParameters[A, C],
+             times: Int): Seq[AnalyzedPopulation[A, C]]
 }
 
 trait AnalyzedPopulation[A <: ObjectAddress, C <: Chromosome[A, _]]
     extends Population[A, C] {
-  def newGeneration[V <: DiscreteDimensionValue[_]](
-      fitness: Either[IndividualFitness[C, V],
-                      RelativeFitness[C, Population[A, C], V]],
-      //TODO support multi-individual crossover
-      pairSelection: ChromosomeSelection[C],
-      crossover: ChromosomeOperation[C],
-      mutagen: Mutagen[C],
-      surviverSelection: ChromosomeGroupSelection[
-        _ <: Universe[_ <: A, _ <: C]]): AnalyzedPopulation[A, C]
+  def newGeneration(
+      parameters: GenerationParameters[A, C]): AnalyzedPopulation[A, C]
 }
