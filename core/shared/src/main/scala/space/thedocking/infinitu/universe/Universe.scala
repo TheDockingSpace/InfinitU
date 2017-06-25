@@ -32,6 +32,7 @@ trait Universe[A <: ObjectAddress, V <: Comparable[_]] {
 
   val keysByDimension = Map[Dimension[_], SortedSet[A]]()
 
+  //TODO replace by proper access methods
   val objects: Map[A, V]
 
   def acceptValueOnAddress(address: A, value: V): Boolean = {
@@ -64,7 +65,7 @@ trait Universe[A <: ObjectAddress, V <: Comparable[_]] {
 
   def invertAddress(dimension: Dimension[V]): Universe[A, V] = {
     val sortedAddresses =
-      objects.keys.toList.sortWith(AddressesByDimension(dimension).gt)
+      keys.toList.sortWith(AddressesByDimension(dimension).gt)
     val readdressedObjects = sortedAddresses
       .zip(sortedAddresses.reverse)
       .map {
@@ -74,6 +75,12 @@ trait Universe[A <: ObjectAddress, V <: Comparable[_]] {
       .toMap
     withObjects(readdressedObjects)
   }
+
+  def keys: Iterable[A] = objects.keys
+
+  def values: Iterable[V] = objects.values
+
+  def toIterable: Iterable[(A, V)] = objects.toIterable
 
 }
 

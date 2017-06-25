@@ -11,7 +11,8 @@ class BooleanGenesPopulation(
 
   override def evolve(parameters: GenerationParameters[Integer1DObjectAddress,
                                                        BooleanGenesChromosome],
-                      times: Int) = {
+                      times: Int): Seq[
+    AnalyzedPopulation[Integer1DObjectAddress, BooleanGenesChromosome]] = {
     for (generation <- 1 to times) {}
     ???
   }
@@ -27,6 +28,9 @@ case class BooleanGenesAnalyzedPopulation(
   override def newGeneration(
       parameters: GenerationParameters[Integer1DObjectAddress,
                                        BooleanGenesChromosome])
-    : AnalyzedPopulation[Integer1DObjectAddress, BooleanGenesChromosome] = ???
+    : AnalyzedPopulation[Integer1DObjectAddress, BooleanGenesChromosome] = {
+    //individuals.toIterable.map()
+    ???
+  }
 
 }
