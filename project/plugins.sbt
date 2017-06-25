@@ -2,14 +2,13 @@
 
 resolvers += Resolver.sonatypeRepo("snapshots")
 
-val pluginVersion = sys.props.get("plugin.version").getOrElse("0.1.0")
-
 addSbtPlugin("org.scala-js"     % "sbt-scalajs"              % "0.6.17")
-addSbtPlugin("org.scala-native" % "sbt-scalajs-crossproject" % pluginVersion)
-addSbtPlugin("org.scala-native" % "sbt-crossproject"         % pluginVersion)
-addSbtPlugin("org.scala-native" % "sbt-scala-native"         % pluginVersion)
+addSbtPlugin("org.scala-native" % "sbt-scalajs-crossproject" % "0.2.0")
+addSbtPlugin("org.scala-native" % "sbt-crossproject"         % "0.2.0")
+addSbtPlugin("org.scala-native" % "sbt-scala-native"         % "0.2.1")
 
-addSbtPlugin("com.geirsson"   % "sbt-scalafmt"           % "0.5.6")
+addSbtPlugin("io.get-coursier" % "sbt-coursier" % "1.0.0-M15-1")
+addSbtPlugin("com.lucidchart" % "sbt-scalafmt-coursier" % "1.7")
 addSbtPlugin("org.scalastyle" %% "scalastyle-sbt-plugin" % "0.8.0")
 //addSbtPlugin("com.sksamuel.scapegoat" %% "sbt-scapegoat" % "1.0.4")
 addSbtPlugin("org.scoverage" % "sbt-scoverage"       % "1.5.0")

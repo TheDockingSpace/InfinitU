@@ -66,9 +66,10 @@ def generateIndexTask(suffix: String) = Def.task {
 
 lazy val quantumJS = quantum.js
   .settings(
+    scalaJSUseMainModuleInitializer := true,
     (fastOptJS in Compile) <<= (fastOptJS in Compile).dependsOn(
-      generateIndexTask("fastopt")))
-  .settings((fullOptJS in Compile) <<= (fullOptJS in Compile).dependsOn(
+      generateIndexTask("fastopt")),
+    (fullOptJS in Compile) <<= (fullOptJS in Compile).dependsOn(
     generateIndexTask("opt")))
 
 lazy val quantumJVM = quantum.jvm

@@ -10,9 +10,11 @@ import space.thedocking.infinitu.dimension.DimensionValue
 
 object App extends JSApp {
 
-  val booleanCollapser: Collapser[Collapsable[BooleanValue, BooleanValue],
-                                  BooleanValue] =
+  val booleanCollapser
+    : Collapser[Collapsable[BooleanValue, BooleanValue], BooleanValue] =
     new RandomFiniteSuperpositionCollapser
+
+  def main(args: Array[String]): Unit = main()
 
   def main(): Unit = {
     println("Hello quantum!")

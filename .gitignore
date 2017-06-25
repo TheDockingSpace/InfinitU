@@ -82,3 +82,5 @@ crashlytics-build.properties
 .ensime
 .ensime_lucene/
 .ensime_cache/
+
+/.history
