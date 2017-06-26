@@ -4,17 +4,19 @@ import space.thedocking.infinitu.universe.Universe
 import space.thedocking.infinitu.universe.ObjectAddress
 import space.thedocking.infinitu.dimension.DiscreteDimensionValue
 
-trait Fitness[C <: Chromosome[_, _]]
+trait Fitness[C <: Chromosome[_, _], F <: DiscreteDimensionValue[_]]
 
-trait IndividualFitness[C <: Chromosome[_, _], V <: DiscreteDimensionValue[_]]
-    extends Fitness[C] {
-  def calculate(individual: C): V
+trait IndividualFitness[C <: Chromosome[_, _], F <: DiscreteDimensionValue[_]]
+    extends Fitness[C, F] {
+  def calculate(individual: C): F
 }
 
 trait RelativeFitness[C <: Chromosome[_, _],
-                      P <: Population[_, C],
+                      F <: DiscreteDimensionValue[_],
+                      P <: Population[_, C, F],
                       V <: DiscreteDimensionValue[_]]
-    extends Fitness[C] {
+    extends Fitness[C, F] {
+  def individualFitness(): IndividualFitness[C, F]
   def calculate(individuals: C, population: P): V
 }
 
@@ -26,10 +28,10 @@ trait ChromosomeGroupSelection[U <: Universe[_, _]] {
   def apply(individuals: U): U
 }
 
-class GenerationParameters[A <: ObjectAddress, C <: Chromosome[A, _]](
+class GenerationParameters[A <: ObjectAddress, C <: Chromosome[A, _], F <: DiscreteDimensionValue[_]](
     val fitness: Either[
-      IndividualFitness[C, _ <: DiscreteDimensionValue[_]],
-      RelativeFitness[C, Population[A, C], _ <: DiscreteDimensionValue[_]]],
+      IndividualFitness[C, _ <: DiscreteDimensionValue[F]],
+      RelativeFitness[C, F, Population[A, C, F], _ <: DiscreteDimensionValue[F]]],
     //TODO support multi-individual crossover
     val pairSelection: ChromosomeSelection[C],
     val crossover: ChromosomeOperation[C],
@@ -38,14 +40,14 @@ class GenerationParameters[A <: ObjectAddress, C <: Chromosome[A, _]](
       _ <: Universe[_ <: A, _ <: C]]
 )
 
-trait Population[A <: ObjectAddress, C <: Chromosome[A, _]] {
+trait Population[A <: ObjectAddress, C <: Chromosome[A, _], F <: DiscreteDimensionValue[_]] {
   def individuals: Universe[A, C]
-  def evolve(parameters: GenerationParameters[A, C],
-             times: Int): Seq[AnalyzedPopulation[A, C]]
+  def evolve(parameters: GenerationParameters[A, C, F],
+             times: Int): Seq[AnalyzedPopulation[A, C, F]]
 }
 
-trait AnalyzedPopulation[A <: ObjectAddress, C <: Chromosome[A, _]]
-    extends Population[A, C] {
+trait AnalyzedPopulation[A <: ObjectAddress, C <: Chromosome[A, _], F <: DiscreteDimensionValue[_]]
+    extends Population[A, C, F] {
   def newGeneration(
-      parameters: GenerationParameters[A, C]): AnalyzedPopulation[A, C]
+      parameters: GenerationParameters[A, C, F]): AnalyzedPopulation[A, C, F]
 }

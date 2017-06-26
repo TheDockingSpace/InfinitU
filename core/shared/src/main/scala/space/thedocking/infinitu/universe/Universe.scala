@@ -81,6 +81,8 @@ trait Universe[A <: ObjectAddress, V <: Comparable[_]] {
   def values: Iterable[V] = objects.values
 
   def toIterable: Iterable[(A, V)] = objects.toIterable
+  
+  def size: Int = objects.size
 
 }
 

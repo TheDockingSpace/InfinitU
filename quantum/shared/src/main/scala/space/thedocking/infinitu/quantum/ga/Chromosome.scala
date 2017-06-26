@@ -19,4 +19,16 @@ trait Chromosome[A <: ObjectAddress, G <: Comparable[_]]
 
   def genes: Universe[A, G]
 
+  override def compareTo(other: Chromosome[A, G]) = {
+    if (this.genes.size != other.genes.size) {
+      //assumes that all addresses exists in both chromosomes and are dense up to some initialization point
+      this.genes.size - other.genes.size
+    } else {
+      this.genes.keys.find(address =>
+        !(this.genes.get(address).equals(other.genes.get(address))))
+        .map(address => this.genes.get(address).get.compareTo(other.genes.get(address).get.asInstanceOf))
+        .getOrElse(0)
+    }
+  }
+
 }
