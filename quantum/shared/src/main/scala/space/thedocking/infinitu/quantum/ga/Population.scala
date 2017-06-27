@@ -4,20 +4,19 @@ import space.thedocking.infinitu.universe.Universe
 import space.thedocking.infinitu.universe.ObjectAddress
 import space.thedocking.infinitu.dimension.DiscreteDimensionValue
 
-trait Fitness[C <: Chromosome[_, _], F <: DiscreteDimensionValue[_]]
+trait Fitness[C <: Chromosome[_, _], +F <: DiscreteDimensionValue[_]]
 
-trait IndividualFitness[C <: Chromosome[_, _], F <: DiscreteDimensionValue[_]]
+trait IndividualFitness[C <: Chromosome[_, _], +F <: DiscreteDimensionValue[_]]
     extends Fitness[C, F] {
   def calculate(individual: C): F
 }
 
 trait RelativeFitness[C <: Chromosome[_, _],
                       F <: DiscreteDimensionValue[_],
-                      P <: Population[_, C, F],
-                      V <: DiscreteDimensionValue[_]]
+                      P <: Population[_, C, F]]
     extends Fitness[C, F] {
-  def individualFitness(): IndividualFitness[C, F]
-  def calculate(individuals: C, population: P): V
+  def individualFitness: IndividualFitness[C, F]
+  def calculate(individuals: C, population: P): F
 }
 
 trait ChromosomeSelection[C <: Chromosome[_, _]] {
@@ -30,8 +29,8 @@ trait ChromosomeGroupSelection[U <: Universe[_, _]] {
 
 class GenerationParameters[A <: ObjectAddress, C <: Chromosome[A, _], F <: DiscreteDimensionValue[_]](
     val fitness: Either[
-      IndividualFitness[C, _ <: DiscreteDimensionValue[F]],
-      RelativeFitness[C, F, Population[A, C, F], _ <: DiscreteDimensionValue[F]]],
+      IndividualFitness[C, _ <: F],
+      RelativeFitness[C, F, Population[A, C, F]]],
     //TODO support multi-individual crossover
     val pairSelection: ChromosomeSelection[C],
     val crossover: ChromosomeOperation[C],
@@ -42,12 +41,18 @@ class GenerationParameters[A <: ObjectAddress, C <: Chromosome[A, _], F <: Discr
 
 trait Population[A <: ObjectAddress, C <: Chromosome[A, _], F <: DiscreteDimensionValue[_]] {
   def individuals: Universe[A, C]
-  def evolve(parameters: GenerationParameters[A, C, F],
-             times: Int): Seq[AnalyzedPopulation[A, C, F]]
-}
+	//TODO instead of this map like behaviour, replace by some analysis result class where statistics can be attached
+  def fitnessValue(individualAddress: A): F
 
-trait AnalyzedPopulation[A <: ObjectAddress, C <: Chromosome[A, _], F <: DiscreteDimensionValue[_]]
-    extends Population[A, C, F] {
-  def newGeneration(
-      parameters: GenerationParameters[A, C, F]): AnalyzedPopulation[A, C, F]
+	//TODO think about renaming address to key...
+  def keys: Iterable[A] = individuals.keys
+
+  def values: Iterable[C] = individuals.values
+
+  def toIterable: Iterable[(A, C)] = individuals.toIterable
+  
+  def size: Int = individuals.size
+
+  def map[B](f: ((A, C)) => B) = individuals.map(f);
+
 }

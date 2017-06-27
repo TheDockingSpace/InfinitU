@@ -84,6 +84,8 @@ trait Universe[A <: ObjectAddress, V <: Comparable[_]] {
   
   def size: Int = objects.size
 
+  def map[B](f: ((A, V)) => B) = objects.map(f);
+
 }
 
 trait InvalidAddresses[A <: ObjectAddress] { self: Universe[_, _] =>
