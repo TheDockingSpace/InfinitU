@@ -1,3 +1,4 @@
+import sbt.Def
 import sbtcrossproject.crossProject
 
 enablePlugins(CopyPasteDetector, GitVersioning, GitBranchPrompt)
@@ -53,7 +54,7 @@ lazy val quantum = crossProject(JSPlatform, JVMPlatform /*, NativePlatform*/ )
 //.nativeSettings(resolvers += Resolver.sonatypeRepo("snapshots"))
   .dependsOn(core)
 
-def generateIndexTask(suffix: String) = Def.task {
+def generateIndexTask(suffix: String): Def.Initialize[Task[Unit]] = Def.task {
   val source = baseDirectory.value / "index.html"
   val target = (crossTarget in Compile).value / "index.html"
   val log    = streams.value.log

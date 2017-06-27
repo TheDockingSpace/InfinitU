@@ -2,7 +2,7 @@ package space.thedocking.infinitu.quantum.ga
 
 import space.thedocking.infinitu.integer.{Integer1DObjectAddress, IntegerValue}
 
-import scala.collection.immutable
+import scala.annotation.tailrec
 
 class BooleanGenesAlgorithm
     extends Algorithm[Integer1DObjectAddress,
@@ -15,11 +15,25 @@ class BooleanGenesAlgorithm
                       parameters: GenerationParameters[Integer1DObjectAddress,
                                                        BooleanGenesChromosome,
                                                        IntegerValue],
-                      times: Int): Seq[Population[Integer1DObjectAddress,
+                      times: Int): Stream[Population[Integer1DObjectAddress,
                                                   BooleanGenesChromosome,
                                                   IntegerValue]] = {
-    for (generation <- 1 to times) {}
-    ???
+    @tailrec
+    def generate(acc: Stream[Population[Integer1DObjectAddress,
+      BooleanGenesChromosome,
+      IntegerValue]], times: Int): Stream[Population[Integer1DObjectAddress,
+      BooleanGenesChromosome,
+      IntegerValue]] = {
+      times match {
+        case t if t < 1 =>
+          Stream.empty
+        case _ =>
+          val nextGeneration = evolve(population, parameters)
+          generate(nextGeneration #:: acc,
+            times - 1)
+      }
+    }
+    generate(Stream.empty, times)
   }
 
   override def evolve(population: Population[Integer1DObjectAddress,
@@ -65,9 +79,9 @@ class BooleanGenesAlgorithm
                                      BooleanGenesChromosome,
                                      IntegerValue]): BooleanGenesPopulation = {
     val reanalyzedPopulation = analyzedPopulation.map {
-        case (address, chromosome) =>
-          (address, relativeFitness.calculate(chromosome, analyzedPopulation))
-      }
+      case (address, chromosome) =>
+        (address, relativeFitness.calculate(chromosome, analyzedPopulation))
+    }
     BooleanGenesPopulation(analyzedPopulation.individuals,
                            reanalyzedPopulation.toMap)
   }
