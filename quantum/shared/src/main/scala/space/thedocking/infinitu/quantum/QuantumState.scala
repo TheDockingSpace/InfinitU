@@ -1,11 +1,7 @@
 package space.thedocking.infinitu.quantum
 
-import space.thedocking.infinitu.bool.BooleanValue
-import space.thedocking.infinitu.dimension.DimensionValue
-import space.thedocking.infinitu.dimension.Finite
-import space.thedocking.infinitu.bool.TrueValue
-import space.thedocking.infinitu.bool.FalseValue
-import space.thedocking.infinitu.dimension.Finiteness
+import space.thedocking.infinitu.bool.{BooleanValue, FalseValue, TrueValue}
+import space.thedocking.infinitu.dimension.{DimensionValue, Finite, Finiteness}
 import space.thedocking.infinitu.obj.ObjectValue
 
 sealed trait QuantumState {

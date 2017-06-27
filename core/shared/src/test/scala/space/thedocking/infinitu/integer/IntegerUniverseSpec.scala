@@ -1,10 +1,10 @@
 package space.thedocking.infinitu.integer
 
-import space.thedocking.infinitu.dimension.DimensionValue
 import org.junit.runner.RunWith
 import org.specs2.matcher.ShouldMatchers
 import org.specs2.mutable.Specification
 import org.specs2.runner.JUnitRunner
+import space.thedocking.infinitu.dimension.DimensionValue
 
 @RunWith(classOf[JUnitRunner])
 class IntegerUniverseSpec extends Specification with ShouldMatchers {

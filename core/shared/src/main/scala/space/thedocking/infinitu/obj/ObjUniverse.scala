@@ -1,10 +1,9 @@
 package space.thedocking.infinitu.obj
 
 import space.thedocking.infinitu.dimension._
-import space.thedocking.infinitu.integer.IntegerIntervalDimension
 import space.thedocking.infinitu.integer.IntegerImplicits._
+import space.thedocking.infinitu.integer.{IntegerIntervalDimension, IntegerValue}
 import space.thedocking.infinitu.universe._
-import space.thedocking.infinitu.integer.IntegerValue
 
 object ObjectValue {
   def apply[V](value: V): ObjectValue[V] =

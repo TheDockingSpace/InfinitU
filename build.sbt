@@ -1,4 +1,4 @@
-import sbtcrossproject.{crossProject, CrossType}
+import sbtcrossproject.crossProject
 
 enablePlugins(CopyPasteDetector, GitVersioning, GitBranchPrompt)
 

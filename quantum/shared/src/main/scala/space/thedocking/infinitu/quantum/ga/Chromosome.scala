@@ -1,7 +1,6 @@
 package space.thedocking.infinitu.quantum.ga
 
-import space.thedocking.infinitu.universe.Universe
-import space.thedocking.infinitu.universe.ObjectAddress
+import space.thedocking.infinitu.universe.{ObjectAddress, Universe}
 
 trait ChromosomeOperation[C <: Chromosome[_, _]] {
   def apply(chromosome: C): C

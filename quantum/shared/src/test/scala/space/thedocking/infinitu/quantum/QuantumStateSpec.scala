@@ -4,12 +4,11 @@ import org.junit.runner.RunWith
 import org.specs2.matcher.ShouldMatchers
 import org.specs2.mutable.Specification
 import org.specs2.runner.JUnitRunner
-import space.thedocking.infinitu.quantum.QuantumState._
-import space.thedocking.infinitu.quantum.Plotter._
 import space.thedocking.infinitu.bool.BooleanValue
-import space.thedocking.infinitu.dimension.DimensionValue
-import space.thedocking.infinitu.obj.ObjectValue
 import space.thedocking.infinitu.obj.ObjectImplicits._
+import space.thedocking.infinitu.obj.ObjectValue
+import space.thedocking.infinitu.quantum.Plotter._
+import space.thedocking.infinitu.quantum.QuantumState._
 
 @RunWith(classOf[JUnitRunner])
 class QuantumStateSpec extends Specification with ShouldMatchers {

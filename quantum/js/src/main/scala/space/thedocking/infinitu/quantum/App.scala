@@ -1,12 +1,11 @@
 package space.thedocking.infinitu.quantum
 
-import scala.scalajs.js.JSApp
 import org.scalajs.dom
-import dom.document
-import space.thedocking.infinitu.quantum.QuantumState._
-import space.thedocking.infinitu.quantum.Plotter._
+import org.scalajs.dom.document
 import space.thedocking.infinitu.bool.BooleanValue
-import space.thedocking.infinitu.dimension.DimensionValue
+import space.thedocking.infinitu.quantum.QuantumState._
+
+import scala.scalajs.js.JSApp
 
 object App extends JSApp {
 

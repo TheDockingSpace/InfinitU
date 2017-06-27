@@ -1,7 +1,6 @@
 package space.thedocking.infinitu.list
 
 import space.thedocking.infinitu.dimension._
-import space.thedocking.infinitu.universe._
 
 trait ListValue[V <: Comparable[_]] extends DiscreteDimensionValue[List[V]] {
 

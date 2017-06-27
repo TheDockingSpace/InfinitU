@@ -1,8 +1,7 @@
 package space.thedocking.infinitu.quantum.ga
 
-import space.thedocking.infinitu.universe.Universe
-import space.thedocking.infinitu.universe.ObjectAddress
 import space.thedocking.infinitu.dimension.DiscreteDimensionValue
+import space.thedocking.infinitu.universe.{ObjectAddress, Universe}
 
 trait Fitness[C <: Chromosome[_, _], +F <: DiscreteDimensionValue[_]]
 

@@ -1,9 +1,6 @@
 package space.thedocking.infinitu.bool
 
-import space.thedocking.infinitu.dimension.DiscreteDimensionValue
-import space.thedocking.infinitu.dimension.DimensionValue
-import space.thedocking.infinitu.dimension.Finite
-import space.thedocking.infinitu.dimension.Negatable
+import space.thedocking.infinitu.dimension.{DimensionValue, DiscreteDimensionValue, Negatable}
 
 //TODO complete other methods, trait implementations and refactor to remove the plus minus stuff
 //for now, just a thought, roughly interpreting values as 1 or 0 for plus/minus
