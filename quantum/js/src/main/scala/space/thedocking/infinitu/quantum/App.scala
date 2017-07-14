@@ -9,10 +9,6 @@ import scala.scalajs.js.JSApp
 
 object App extends JSApp {
 
-  val booleanCollapser
-    : Collapser[Collapsable[BooleanValue, BooleanValue], BooleanValue] =
-    new RandomFiniteSuperpositionCollapser
-
   def main(args: Array[String]): Unit = main()
 
   def main(): Unit = {

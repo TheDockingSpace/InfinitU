@@ -4,26 +4,20 @@ import space.thedocking.infinitu.integer.{Integer1DObjectAddress, IntegerValue}
 
 import scala.annotation.tailrec
 
-class BooleanGenesAlgorithm
+case class BooleanGenesAlgorithm()
     extends Algorithm[Integer1DObjectAddress,
                       BooleanGenesChromosome,
-                      IntegerValue] {
+                      IntegerValue,
+                      BooleanGenesPopulation] {
 
-  override def evolve(population: Population[Integer1DObjectAddress,
-                                             BooleanGenesChromosome,
-                                             IntegerValue],
+  override def evolve(population: BooleanGenesPopulation,
                       parameters: GenerationParameters[Integer1DObjectAddress,
                                                        BooleanGenesChromosome,
-                                                       IntegerValue],
-                      times: Int): Stream[Population[Integer1DObjectAddress,
-                                                  BooleanGenesChromosome,
-                                                  IntegerValue]] = {
+                                                       IntegerValue,
+                                                       BooleanGenesPopulation],
+                      times: Int): Stream[BooleanGenesPopulation] = {
     @tailrec
-    def generate(acc: Stream[Population[Integer1DObjectAddress,
-      BooleanGenesChromosome,
-      IntegerValue]], times: Int): Stream[Population[Integer1DObjectAddress,
-      BooleanGenesChromosome,
-      IntegerValue]] = {
+    def generate(acc: Stream[BooleanGenesPopulation], times: Int): Stream[BooleanGenesPopulation] = {
       times match {
         case t if t < 1 =>
           Stream.empty
@@ -36,15 +30,12 @@ class BooleanGenesAlgorithm
     generate(Stream.empty, times)
   }
 
-  override def evolve(population: Population[Integer1DObjectAddress,
-                                             BooleanGenesChromosome,
-                                             IntegerValue],
+  override def evolve(population: BooleanGenesPopulation,
                       parameters: GenerationParameters[Integer1DObjectAddress,
                                                        BooleanGenesChromosome,
-                                                       IntegerValue])
-    : Population[Integer1DObjectAddress,
-                 BooleanGenesChromosome,
-                 IntegerValue] = {
+                                                       IntegerValue,
+                                                       BooleanGenesPopulation])
+    : BooleanGenesPopulation = {
     val analyzedPopulation: BooleanGenesPopulation = parameters.fitness match {
       case Left(individualFitness) =>
         calculateIndividual(individualFitness, population)
@@ -59,9 +50,7 @@ class BooleanGenesAlgorithm
   def calculateIndividual(
       individualFitness: IndividualFitness[BooleanGenesChromosome,
                                            IntegerValue],
-      population: Population[Integer1DObjectAddress,
-                             BooleanGenesChromosome,
-                             IntegerValue]): BooleanGenesPopulation = {
+      population: BooleanGenesPopulation): BooleanGenesPopulation = {
     val analyzedPopulation = population.individuals.map {
       case (address, chromosome) =>
         (address -> individualFitness.calculate(chromosome))
@@ -72,12 +61,8 @@ class BooleanGenesAlgorithm
   def calculateRelative(
       relativeFitness: RelativeFitness[BooleanGenesChromosome,
                                        IntegerValue,
-                                       Population[Integer1DObjectAddress,
-                                                  BooleanGenesChromosome,
-                                                  IntegerValue]],
-      analyzedPopulation: Population[Integer1DObjectAddress,
-                                     BooleanGenesChromosome,
-                                     IntegerValue]): BooleanGenesPopulation = {
+                                       BooleanGenesPopulation],
+      analyzedPopulation: BooleanGenesPopulation): BooleanGenesPopulation = {
     val reanalyzedPopulation = analyzedPopulation.map {
       case (address, chromosome) =>
         (address, relativeFitness.calculate(chromosome, analyzedPopulation))

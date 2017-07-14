@@ -26,10 +26,10 @@ trait ChromosomeGroupSelection[U <: Universe[_, _]] {
   def apply(individuals: U): U
 }
 
-class GenerationParameters[A <: ObjectAddress, C <: Chromosome[A, _], F <: DiscreteDimensionValue[_]](
+case class GenerationParameters[A <: ObjectAddress, C <: Chromosome[A, _], F <: DiscreteDimensionValue[_], P<: Population[A, C, F]](
     val fitness: Either[
       IndividualFitness[C, _ <: F],
-      RelativeFitness[C, F, Population[A, C, F]]],
+      RelativeFitness[C, F, P]],
     //TODO support multi-individual crossover
     val pairSelection: ChromosomeSelection[C],
     val crossover: ChromosomeOperation[C],
