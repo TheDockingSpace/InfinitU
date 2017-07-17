@@ -2,6 +2,8 @@ package space.thedocking.infinitu.integer
 
 import space.thedocking.infinitu.dimension._
 import space.thedocking.infinitu.universe._
+import java.lang.{Boolean => JBoolean}
+import scala.math.pow
 
 case class IntegerValue(override val value: Integer = 0)
     extends DiscreteDimensionValue[Integer] {
@@ -121,12 +123,15 @@ case class IntegerIntervalDimension(
 }
 
 case class Integer1DObjectAddress(val firstValue: Integer = 0,
-                                  override val dimensions: List[Dimension[_]] =
+                                  override val dimensions: List[IntegerDimension] =
                                     List(IntegerDimension("x")))
     extends ObjectAddress {
 
   override val values =
     List(IntegerValue(firstValue))
+    
+  val dimension = dimensions.head.asInstanceOf[IntegerDimension]
+  val integerValue = valueAt(dimension).value
 
   override def withValues[A <: ObjectAddress](
       values: List[DimensionValue[_]]): A =
@@ -138,7 +143,7 @@ case class Integer1DObjectAddress(val firstValue: Integer = 0,
 class Integer1DUniverse[V <: Comparable[_]](
     override val name: String = "Integer1DUniverse",
     val dimensionName: String = "x",
-    override val objects: Map[Integer1DObjectAddress, _ <: V] = Map())
+    override val objects: Map[Integer1DObjectAddress,V] = Map.empty)
     extends Universe[Integer1DObjectAddress, V] {
 
   override val dimensions = List(IntegerDimension(dimensionName))
@@ -148,6 +153,35 @@ class Integer1DUniverse[V <: Comparable[_]](
     new Integer1DUniverse(name, dimensionName, objects)
   }
 
+}
+
+object Integer1DUniverse {
+  def empty[V <: Comparable[_]] = new Integer1DUniverse[V](objects = Map.empty)
+}
+
+class IntegerBoolean1DUniverse(
+  override val name: String = "IntegerBoolean1DUniverse",
+  override val dimensionName: String = "bits",
+  val bits: Map[Integer1DObjectAddress, JBoolean] = Map.empty)
+    extends Integer1DUniverse[JBoolean](objects = bits) {
+  lazy val bitStringValue = values.map(if (_) "1" else "0").mkString("")
+  lazy val longValue = {
+    val dIter = bits.map {
+      case (a: Integer1DObjectAddress, v: JBoolean) if v =>
+        pow(2, a.integerValue.toDouble)
+      case _ => 0
+    }
+    dIter.fold(0d)(_ + _).toLong
+  }
+}
+
+object IntegerBoolean1DUniverse{
+  val empty = new IntegerBoolean1DUniverse
+  def from(bitString: String) = new IntegerBoolean1DUniverse(bits = bitString.zipWithIndex.map{
+    case ('0', i) => (Integer1DObjectAddress(i) -> JBoolean.FALSE)
+    case ('1', i) => (Integer1DObjectAddress(i) -> JBoolean.TRUE)
+    case c => throw new RuntimeException(s"""Cannot parse bitString. Found "$c". Expected "0" or "1"""")
+  }.toMap)
 }
 
 case class Integer2DObjectAddress(

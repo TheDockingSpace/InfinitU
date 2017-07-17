@@ -37,9 +37,9 @@ case class BooleanGenesAlgorithm()
                                                        BooleanGenesPopulation])
     : BooleanGenesPopulation = {
     val analyzedPopulation: BooleanGenesPopulation = parameters.fitness match {
-      case Left(individualFitness) =>
+      case individualFitness : IndividualFitness[BooleanGenesChromosome, IntegerValue] =>
         calculateIndividual(individualFitness, population)
-      case Right(relativeFitness) =>
+      case relativeFitness: RelativeFitness[BooleanGenesChromosome, IntegerValue, BooleanGenesPopulation] =>
         calculateRelative(
           relativeFitness,
           calculateIndividual(relativeFitness.individualFitness, population))

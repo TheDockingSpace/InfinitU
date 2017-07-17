@@ -10,7 +10,7 @@ trait ObjectAddress {
 
   val values: List[DimensionValue[_]]
 
-  for ((d, v) <- dimensions.zip(values)) {
+  lazy val isValid = dimensions.zip(values).forall { case (d, v) =>
     d.asInstanceOf[Dimension[Comparable[_]]]
       .accept(v.asInstanceOf[DimensionValue[Comparable[_]]])
   }
@@ -84,7 +84,7 @@ trait Universe[A <: ObjectAddress, V <: Comparable[_]] {
   
   def size: Int = objects.size
 
-  def map[B](f: ((A, V)) => B) = objects.map(f);
+  def map[B](f: ((A, V)) => B) = objects.map(f)
 
 }
 
