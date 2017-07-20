@@ -14,9 +14,12 @@ trait MultiChromosomeOperation[C <: Chromosome[_, _]] {
 trait Mutagen[C <: Chromosome[_, _]] extends ChromosomeOperation[C]
 
 trait Chromosome[A <: ObjectAddress, G <: Comparable[_]]
-    extends Comparable[Chromosome[A, G]] {
+    extends Comparable[Chromosome[A, G]]
+    with Universe[A, G] {
 
-  def genes: Universe[A, G]
+  val genes: Universe[A, G]
+  
+  override val objects = genes.objects
 
   override def compareTo(other: Chromosome[A, G]) = {
     if (this.genes.size != other.genes.size) {

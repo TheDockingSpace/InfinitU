@@ -8,10 +8,12 @@ import space.thedocking.infinitu.bool.BooleanValue
 import space.thedocking.infinitu.quantum.QuantumState._
 import space.thedocking.infinitu.dimension.Dimension
 import space.thedocking.infinitu.integer.IntegerBoolean1DUniverse
+import space.thedocking.infinitu.integer.Integer1DUniverse
 
 case class BooleanGenesChromosome(
   override val genes: BooleanGenes)
-    extends Chromosome[Integer1DObjectAddress, JBoolean]
+    extends Integer1DUniverse[JBoolean](objects = genes.genes)
+    with Chromosome[Integer1DObjectAddress, JBoolean]
 
 object BooleanGenesChromosome {
   def apply(chromosomeSize: Integer): BooleanGenesChromosome = {

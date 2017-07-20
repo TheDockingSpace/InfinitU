@@ -103,6 +103,8 @@ trait Universe[A <: ObjectAddress, V <: Comparable[_]] {
   def size: Int = objects.size
 
   def map[B](f: ((A, V)) => B) = objects.map(f)
+  
+  def sortWith(lt: ((A, V), (A, V)) ⇒ Boolean): List[(A, V)] = objects.toList.sortWith(lt)
 
 }
 

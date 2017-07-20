@@ -19,7 +19,7 @@ trait RelativeFitness[C <: Chromosome[_, _],
 }
 
 trait ChromosomeSelection[C <: Chromosome[_, _]] {
-  def apply[P <: Population[_, C, _]](population: P): C
+  def apply[P <: Population[_, C, _]](population: P): List[C]
 }
 
 trait ChromosomeGroupSelection[P <: Population[_,_,_]] {
@@ -33,9 +33,10 @@ class GenerationParameters[A <: ObjectAddress,
     val fitness: Fitness[C, _ <: F],
     //TODO support multi-individual crossover
     val pairSelection: ChromosomeSelection[C],
-    val crossover: ChromosomeOperation[C],
+    val crossover: MultiChromosomeOperation[C],
     val mutagen: Mutagen[C],
-    val surviverSelection: ChromosomeGroupSelection[P]
+    val surviverSelection: ChromosomeGroupSelection[P],
+    val evolutionListener: EvolutionListener[P] = EvolutionListener.doNothing[P]
 )
 
 trait Population[A <: ObjectAddress, C <: Chromosome[A, _], F <: DiscreteDimensionValue[_]] {
@@ -48,6 +49,10 @@ trait Population[A <: ObjectAddress, C <: Chromosome[A, _], F <: DiscreteDimensi
 
   def values: Iterable[C] = individuals.values
 
+  def get(address: A): Option[C] = individuals.get(address)
+
+  def apply(address: A) = individuals(address)
+
   def toIterable: Iterable[(A, C)] = individuals.toIterable
   
   def size: Int = individuals.size
@@ -55,5 +60,7 @@ trait Population[A <: ObjectAddress, C <: Chromosome[A, _], F <: DiscreteDimensi
   def map[B](f: ((A, C)) => B) = individuals.map(f);
   
   def nextRandom: C = individuals.nextRandom
+  
+  def sortWith(lt: ((A, C), (A, C)) ⇒ Boolean): List[(A, C)] = individuals.sortWith(lt)
 
 }
