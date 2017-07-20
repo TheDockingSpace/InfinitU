@@ -3,6 +3,7 @@ package space.thedocking.infinitu.universe
 import space.thedocking.infinitu.dimension._
 
 import scala.collection.immutable.SortedSet
+import scala.util.Random
 
 trait ObjectAddress {
 
@@ -74,6 +75,23 @@ trait Universe[A <: ObjectAddress, V <: Comparable[_]] {
       }
       .toMap
     withObjects(readdressedObjects)
+  }
+
+  //XXX adapted from Finite trait...
+  def nextRandom: V = {
+    val values = objects.values
+    require(
+      objects.size > 0,
+      "Need at least one value on the universe to be able to get it randomly :)")
+    //TODO replace by logging framework
+    if (values.size == 1) {
+      val result = values.head
+      println(s"The only known value in universe $this was $result")
+      result
+    } else {
+      val reminder = values.drop(Random.nextInt(values.size))
+      reminder.head
+    }
   }
 
   def keys: Iterable[A] = objects.keys

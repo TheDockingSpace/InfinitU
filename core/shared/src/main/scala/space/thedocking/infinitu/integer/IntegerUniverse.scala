@@ -173,6 +173,7 @@ class IntegerBoolean1DUniverse(
     }
     dIter.fold(0d)(_ + _).toLong
   }
+  lazy val intValue = longValue.toInt
 }
 
 object IntegerBoolean1DUniverse{

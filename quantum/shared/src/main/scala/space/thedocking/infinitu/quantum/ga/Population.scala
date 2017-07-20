@@ -19,11 +19,11 @@ trait RelativeFitness[C <: Chromosome[_, _],
 }
 
 trait ChromosomeSelection[C <: Chromosome[_, _]] {
-  def apply[U <: Universe[_, C]](individuals: U): C
+  def apply[P <: Population[_, C, _]](population: P): C
 }
 
-trait ChromosomeGroupSelection[U <: Universe[_, _]] {
-  def apply(individuals: U): U
+trait ChromosomeGroupSelection[P <: Population[_,_,_]] {
+  def apply(population: P): P
 }
 
 class GenerationParameters[A <: ObjectAddress, 
@@ -35,8 +35,7 @@ class GenerationParameters[A <: ObjectAddress,
     val pairSelection: ChromosomeSelection[C],
     val crossover: ChromosomeOperation[C],
     val mutagen: Mutagen[C],
-    val surviverSelection: ChromosomeGroupSelection[
-      _ <: Universe[_ <: A, _ <: C]]
+    val surviverSelection: ChromosomeGroupSelection[P]
 )
 
 trait Population[A <: ObjectAddress, C <: Chromosome[A, _], F <: DiscreteDimensionValue[_]] {
@@ -54,5 +53,7 @@ trait Population[A <: ObjectAddress, C <: Chromosome[A, _], F <: DiscreteDimensi
   def size: Int = individuals.size
 
   def map[B](f: ((A, C)) => B) = individuals.map(f);
+  
+  def nextRandom: C = individuals.nextRandom
 
 }
